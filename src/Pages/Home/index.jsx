@@ -14,9 +14,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import BlogItem from "../../components/BlogItem";
-import Footer from "../../components/Footer";
 import HomeBannerV2 from "../../components/HomeSliderV2";
 import BannerBoxV2 from "../../components/BannerBoxV2";
+import AdsBannerSliderV2 from "../../components/AddsBannerSliderV2";
 
 const Home = () => {
   const [value, setValue] = useState(0);
@@ -36,8 +36,8 @@ const Home = () => {
           </div>
 
           <div className="part2 w-[30%] flex items-center gap-5 justify-between flex-col">
-            <BannerBoxV2 info='left' image='/sub-banner-1.jpg' />
-            <BannerBoxV2 info='lerightft' image='/sub-banner-2.jpg' />
+            <BannerBoxV2 info='left' image={'/sub-banner-1.jpg'} />
+            <BannerBoxV2 info='lerightft' image={'/sub-banner-2.jpg'} />
           </div>
         </div>
       </section>
@@ -98,7 +98,7 @@ const Home = () => {
             <p className="font-bold text-[25px]">- Only $200*</p>
           </div>
 
-          <AdsBannerSlider items={4} />
+          <AdsBannerSliderV2 items={4} />
         </div>
       </section>
 
@@ -150,7 +150,7 @@ const Home = () => {
       </section>
 
 
-      <Footer />
+      
 
       
     </>

@@ -22,7 +22,7 @@ body{
 .container{width: 95%; margin: auto;}
 
 .btn-org{background: #ff5252 !important; color: #fff !important; font-weight: 500; font-size: 16px; padding: 7px 20px !important;}
-
+.btn-org:hover{background: #171717 !important;}
 .link:hover{color: #ff5252;}
 
 .MuiBadge-badge{background-color: #ff5252 !important;}
@@ -36,7 +36,7 @@ nav ul button:hover{background: none !important;}
 background: #fff; border-radius: 100%; width: 45px; height: 45px; min-width: 45px; 
 box-shadow: 0 1px 3px #0000001f, 0 1px 2px #0000003d !important;}
 
-.swiper-button-prev::after, .swiper-button-next::after{font-size: 22px !important; color: #000 !important;}
+.swiper-button-prev, .swiper-button-next{font-size: 18px !important; color: #000 !important;}
 
 .smlBtn .swiper-button-prev, .smlBtn .swiper-button-next{width: 30px !important; height: 30px !important; 
 min-width: 30px !important; top: 55% !important;}
@@ -65,7 +65,7 @@ color: #000 !important;}
 
 footer form input::placeholder{font-size: 14px;}
 
-.css-vuhw6e-MuiButtonBase-root-MuiSwitchBase-root-MuiCheckbox-root {color: #ff5252 !important;}
+.css-vuhw6e-MuiButtonBase-root-MuiSwitchBase-root-MuiCheckbox-root {color: #ff5252;}
 
 .MuiFormControlLabel-label{font-size: 13px !important; color: rgba(0,0,0,0.8);}
 
@@ -80,4 +80,13 @@ footer form input::placeholder{font-size: 14px;}
 .homeSliderV2 .info h4{transition-duration: 1.2s;}
 .homeSliderV2 .info h2{transition-duration: 1.5s;}
 .homeSliderV2 .info h3{transition-duration: 1.8s;}
-.homeSliderV2 .info .btn_{transition-duration: 2s;}
+.homeSliderV2 .info .btn_{transition-duration: 2.1s;}
+
+.MuiCheckbox-root{padding: 6px !important;}
+
+.ReactCollapse--collapse {
+  transition: height 500ms;
+}
+
+.itemViewActions button.active svg{color: #ff5252 !important; opacity: 1;}
+.Mui-selected.MuiPaginationItem-page{background: #ff5252 !important; color: #fff !important;}
