@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
@@ -7,8 +7,11 @@ import { FaRegHeart } from "react-icons/fa";
 import { IoIosGitCompare } from "react-icons/io";
 import { MdZoomOutMap } from "react-icons/md";
 import { GrCart } from "react-icons/gr";
+import { MyContext } from "../../App";
 
 const ProductItemListView = () => {
+  const context = useContext(MyContext);
+
   return (
     <div className="productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)] flex items-center">
       <div className="group imgWrapper w-[25%] rounded-md overflow-hidden relative">
@@ -27,7 +30,10 @@ const ProductItemListView = () => {
         </span>
 
         <div className="actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-4 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100">
-          <Button className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group">
+          <Button
+            className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group"
+            onClick={() => context.setOpenProductDetailsModel(true)}
+          >
             <MdZoomOutMap className="text-[18px] !text-black group-hover:text-white hover:text-white" />
           </Button>
 
@@ -42,7 +48,7 @@ const ProductItemListView = () => {
       </div>
 
       <div className="info p-3 py-5 px-8 w-[75%]">
-        <h6 className="text-[15px]">
+        <h6 className="text-[15px] !font-[400]">
           <Link to="/" className="link transition-all">
             Soylent Green
           </Link>
