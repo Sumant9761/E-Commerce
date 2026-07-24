@@ -16,6 +16,9 @@ import { IoCloseSharp } from "react-icons/io5";
 import ProductDetailsComponent from "./components/ProductDetails";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
+import CartPage from "./Pages/Cart";
+
+
 
 const MyContext = createContext();
 
@@ -24,13 +27,21 @@ function App() {
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState("lg");
 
+  const [openCartPanel, setOpenCartPanel] = useState(false);
 
   const handleCloseProductDetailsModel = () => {
     setOpenProductDetailsModel(false);
   };
 
+  const toggleCartPanel = (newOpen) => () => {
+    setOpenCartPanel(newOpen);
+  };
+
   const values = {
-    setOpenProductDetailsModel
+    setOpenProductDetailsModel,
+    setOpenCartPanel,
+    toggleCartPanel,
+    openCartPanel
   };
 
   return (
@@ -43,6 +54,7 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/cart" element={<CartPage />} />
         </Routes>
         <Footer />
       </MyContext.Provider>
@@ -71,8 +83,6 @@ function App() {
             <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">
               <ProductDetailsComponent />
             </div>
-
-
           </div>
         </DialogContent>
       </Dialog>
@@ -82,4 +92,4 @@ function App() {
 
 export default App;
 
-export {MyContext};
+export { MyContext };

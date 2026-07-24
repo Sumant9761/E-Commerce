@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Search from "../Search";
 import Badge from "@mui/material/Badge";
@@ -8,8 +8,11 @@ import { IoIosGitCompare } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa";
 import Tooltip from "@mui/material/Tooltip";
 import Navigation from './Navigation'
+import { MyContext } from "../../App";
 
 const Header = () => {
+  const context = useContext(MyContext);
+
   return (
     <header className="bg-white">
       <div className="top-strip py-2 border-t-[1px] border-gray-300 border-b-[1px]">
@@ -97,7 +100,7 @@ const Header = () => {
 
               <li>
                 <Tooltip title="Cart">
-                  <IconButton aria-label="cart">
+                  <IconButton aria-label="cart" onClick={() => context.setOpenCartPanel(true)}>
                     <Badge badgeContent={8} color="primary">
                       <IoCart />
                     </Badge>
