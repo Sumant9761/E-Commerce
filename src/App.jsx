@@ -17,8 +17,11 @@ import ProductDetailsComponent from "./components/ProductDetails";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import CartPage from "./Pages/Cart";
+import Verify from "./Pages/Verify";
 
-
+import toast, { Toaster } from "react-hot-toast";
+import ForgotPassword from "./Pages/ForgotPassword";
+import Checkout from "./Pages/Checkout";
 
 const MyContext = createContext();
 
@@ -37,11 +40,21 @@ function App() {
     setOpenCartPanel(newOpen);
   };
 
+  const openAlertBox = (status, msg) => {
+    if (status === "success") {
+      toast.success(msg);
+    }
+    if (status === "error") {
+      toast.error(msg);
+    }
+  };
+
   const values = {
     setOpenProductDetailsModel,
     setOpenCartPanel,
     toggleCartPanel,
-    openCartPanel
+    openCartPanel,
+    openAlertBox,
   };
 
   return (
@@ -55,9 +68,14 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/verify" element={<Verify />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
         <Footer />
       </MyContext.Provider>
+
+      <Toaster />
 
       <Dialog
         open={openProductDetailsModel}
