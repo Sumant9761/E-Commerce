@@ -6,23 +6,74 @@ import { IoEyeOff } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { MyContext } from "../../App";
+import CircularProgress from "@mui/material/CircularProgress";
+import { postData } from "../../utils/api";
+
 
 const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [isShowPassword, setIsShowPassword] = useState(false);
   const [formFields, setFormFields] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
 
   const context = useContext(MyContext);
   const history = useNavigate();
 
-
   const forgotPassword = () => {
-      history('/verify');
-      context.openAlertBox("success", "OTP Send")
-  }
-  
+    context.openAlertBox("success", "OTP Send");
+    history("/verify");
+  };
+
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    setFormFields(() => {
+      return {
+        ...formFields,
+        [name]: value,
+      };
+    });
+  };
+
+  const valideValue = Object.values(formFields).every((el) => el);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setIsLoading(true);
+
+    if (formFields.email === "") {
+      context.openAlertBox("error", "Please enter email id");
+      return false;
+    }
+    if (formFields.password === "") {
+      context.openAlertBox("error", "Please enter password");
+      return false;
+    }
+
+    postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
+      if (res.error !== true) {
+        setIsLoading(false);
+        context.openAlertBox("success", res.message);
+        setFormFields({
+          email: "",
+          password: "",
+        });
+
+        localStorage.setItem("accessToken", res.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.refreshToken);
+
+        context.setIsLogin(true);
+
+        history("/");
+      } else {
+        context.openAlertBox("error", res?.message);
+        setIsLoading(false);
+      }
+    });
+  };
 
   return (
     <section className="section py-10">
@@ -32,15 +83,18 @@ const Login = () => {
             Login to your account
           </h3>
 
-          <form className="w-full mt-5">
+          <form className="w-full mt-5" onSubmit={handleSubmit}>
             <div className="form-group w-full mb-5">
               <TextField
                 type="email"
                 id="email"
+                name="email"
+                value={formFields.email}
+                disabled={isLoading === true ? true : false}
                 label="Email Id"
                 variant="outlined"
                 className="w-full"
-                name="name"
+                onChange={onChangeInput}
               />
             </div>
 
@@ -48,10 +102,13 @@ const Login = () => {
               <TextField
                 type={isShowPassword === false ? "password" : "text"}
                 id="password"
+                name="password"
+                value={formFields.password}
+                disabled={isLoading === true ? true : false}
                 label="Password"
                 variant="outlined"
                 className="w-full"
-                name="password"
+                onChange={onChangeInput}
               />
               <Button
                 className="!absolute top-[10px] right-[10px] z-50 !w-[35px] !h-[35px] !min-w-[35px] !rounded-full !text-black"
@@ -65,17 +122,33 @@ const Login = () => {
               </Button>
             </div>
 
-            <a className="link cursor-pointer text-[14px] font-[600]" onClick={forgotPassword}>
+            <a
+              className="link cursor-pointer text-[14px] font-[600]"
+              onClick={forgotPassword}
+            >
               Forgot Password?
             </a>
 
             <div className="flex items-center w-full mt-3 mb-3">
-              <Button className="btn-org btn-lg w-full">Login</Button>
+              <Button
+                type="submit"
+                disabled={!valideValue}
+                className="btn-org btn-lg w-full flex gap-3"
+              >
+                {isLoading === true ? (
+                  <CircularProgress color="inherit" />
+                ) : (
+                  "Login"
+                )}
+              </Button>
             </div>
 
             <p className="text-center">
               Not Registered?{" "}
-              <Link className="link text-[14px] font-[600] text-primary" to="/register">
+              <Link
+                className="link text-[14px] font-[600] text-primary"
+                to="/register"
+              >
                 Sign Up
               </Link>
             </p>

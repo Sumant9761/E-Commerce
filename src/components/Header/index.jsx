@@ -16,17 +16,36 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { IoBagCheckOutline } from "react-icons/io5";
 import { IoIosLogOut } from "react-icons/io";
+import { fetchDataFromApi } from "../../utils/api";
 
 const Header = () => {
   const context = useContext(MyContext);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const logout = () => {
+    setAnchorEl(null);
+
+    fetchDataFromApi(
+      `/api/user/logout?token=${localStorage.getItem("accessToken")}`,
+      { withCredentials: true },
+    ).then((res) => {
+      console.log(res);
+
+      if (res.error === false) {
+        context.setIsLogin(false);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      }
+    });
   };
 
   return (
@@ -106,10 +125,10 @@ const Header = () => {
 
                     <div className="info flex flex-col">
                       <h4 className="leading-3 text-[14px] text-[rgba(0,0,0,0.7)] font-[500] mb-0 capitalize text-left justify-start">
-                        Sumant Kumar
+                        {context?.userData?.name}
                       </h4>
                       <span className="text-[13px] text-[rgba(0,0,0,0.7)] font-[400] capitalize">
-                        sumant@gmail.com
+                        {context?.userData?.email}
                       </span>
                     </div>
                   </Button>
@@ -178,10 +197,7 @@ const Header = () => {
                         <span className="text-[14px]">My List</span>
                       </MenuItem>
                     </Link>
-                    <MenuItem
-                      onClick={handleClose}
-                      className="flex gap-2 !py-2"
-                    >
+                    <MenuItem onClick={logout} className="flex gap-2 !py-2">
                       <IoIosLogOut className="text-[18px]" />{" "}
                       <span className="text-[14px]">Logout</span>
                     </MenuItem>

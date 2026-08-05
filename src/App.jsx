@@ -6,7 +6,7 @@ import ProductListing from "./Pages/ProductListing";
 
 import Footer from "./components/Footer";
 import ProductDetails from "./Pages/ProductDetails";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -25,6 +25,7 @@ import Checkout from "./Pages/Checkout";
 import MyAccount from "./Pages/MyAccount";
 import MyList from "./Pages/MyList";
 import Orders from "./Pages/Orders";
+import { fetchDataFromApi } from "./utils/api";
 
 const MyContext = createContext();
 
@@ -32,7 +33,8 @@ function App() {
   const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState("lg");
-  const[isLogin, setIsLogin] = useState(true);
+  const[isLogin, setIsLogin] = useState(false);
+  const[userData, setUserData] = useState(null);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -43,6 +45,23 @@ function App() {
   const toggleCartPanel = (newOpen) => () => {
     setOpenCartPanel(newOpen);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    
+    if(token !== undefined && token !== null && token !== ""){
+      setIsLogin(true);
+
+      fetchDataFromApi("/api/user/user-details").then((res) => {
+        console.log(res);
+        setUserData(res.data);
+      })
+
+    }else{
+      setIsLogin(false);
+    }
+
+  },[isLogin])
 
   const openAlertBox = (status, msg) => {
     if (status === "success") {
@@ -60,7 +79,9 @@ function App() {
     openCartPanel,
     openAlertBox,
     isLogin,
-    setIsLogin
+    setIsLogin,
+    setUserData,
+    userData
   };
 
   return (
