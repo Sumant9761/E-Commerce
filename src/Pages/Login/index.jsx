@@ -9,7 +9,6 @@ import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { postData } from "../../utils/api";
 
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,8 +22,25 @@ const Login = () => {
   const history = useNavigate();
 
   const forgotPassword = () => {
-    context.openAlertBox("success", "OTP Send");
-    history("/verify");
+    if (formFields.email === "") {
+      context.openAlertBox("error", "Please enter email id");
+      return false;
+    } else {
+      context.openAlertBox("success", `OTP send to ${formFields.email}`);
+      localStorage.setItem("userEmail", formFields.email);
+      localStorage.setItem("actionType", "forgot-password");
+
+      postData("/api/user/forgot-password", {
+        email: formFields.email
+      }).then((res) => {
+        if (res.error === false) {
+          context.openAlertBox("success", res.message);
+          history("/verify");
+        } else {
+          context.openAlertBox("error", res.message);
+        }
+      });
+    }
   };
 
   const onChangeInput = (e) => {
@@ -53,26 +69,28 @@ const Login = () => {
       return false;
     }
 
-    postData("/api/user/login", formFields, { withCredentials: true }).then((res) => {
-      if (res.error !== true) {
-        setIsLoading(false);
-        context.openAlertBox("success", res.message);
-        setFormFields({
-          email: "",
-          password: "",
-        });
+    postData("/api/user/login", formFields, { withCredentials: true }).then(
+      (res) => {
+        if (res.error !== true) {
+          setIsLoading(false);
+          context.openAlertBox("success", res.message);
+          setFormFields({
+            email: "",
+            password: "",
+          });
 
-        localStorage.setItem("accessToken", res.data.accessToken);
-        localStorage.setItem("refreshToken", res.data.refreshToken);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.refreshToken);
 
-        context.setIsLogin(true);
+          context.setIsLogin(true);
 
-        history("/");
-      } else {
-        context.openAlertBox("error", res?.message);
-        setIsLoading(false);
-      }
-    });
+          history("/");
+        } else {
+          context.openAlertBox("error", res?.message);
+          setIsLoading(false);
+        }
+      },
+    );
   };
 
   return (

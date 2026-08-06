@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Search from "../Search";
 import Badge from "@mui/material/Badge";
 import IconButton from "@mui/material/IconButton";
@@ -20,6 +20,7 @@ import { fetchDataFromApi } from "../../utils/api";
 
 const Header = () => {
   const context = useContext(MyContext);
+  const history = useNavigate();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -38,12 +39,11 @@ const Header = () => {
       `/api/user/logout?token=${localStorage.getItem("accessToken")}`,
       { withCredentials: true },
     ).then((res) => {
-      console.log(res);
-
       if (res.error === false) {
         context.setIsLogin(false);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        history("/");
       }
     });
   };

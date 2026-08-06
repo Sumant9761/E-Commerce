@@ -14,20 +14,18 @@ export const postData = async (url, formData) => {
       body: JSON.stringify(formData),
     });
 
-    if(response.ok){
+    if (response.ok) {
       const data = await response.json();
       //console.log(data);
       return data;
-    }else{
+    } else {
       const errorData = await response.json();
       return errorData;
     }
-
   } catch (error) {
-    console.log('Error', error);
+    console.log("Error", error);
   }
 };
-
 
 // GET request
 export const fetchDataFromApi = async (url) => {
@@ -45,4 +43,36 @@ export const fetchDataFromApi = async (url) => {
     console.log(error);
     return error;
   }
+};
+
+// upload profile image
+export const uploadImage = async (url, updatedData) => {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      "Content-Type": "multipart/form-data",
+    },
+  };
+
+  var response;
+  await axios.put(apiUrl + url, updatedData, params).then((res) => {
+    response = res;
+  });
+  return response;
+};
+
+//edit data
+export const editData = async (url, updatedData) => {
+  const params = {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      "Content-Type": "application/json",
+    },
+  };
+
+  var response;
+  await axios.put(apiUrl + url, updatedData, params).then((res) => {
+    response = res;
+  });
+  return response;
 };

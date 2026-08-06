@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
@@ -6,16 +6,101 @@ import { NavLink } from "react-router";
 import { IoBagCheckOutline } from "react-icons/io5";
 import { IoIosLogOut } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa";
+import { MyContext } from "../../App";
+import CircularProgress from "@mui/material/CircularProgress";
+import { uploadImage } from "../../utils/api";
 
 const AccountSideBar = () => {
+  const [previews, setPreviews] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
+  const context = useContext(MyContext);
+
+  useEffect(() => {
+    const userAvatar = [];
+    if (
+      context?.userData?.avatar !== "" &&
+      context?.userData?.avatar !== undefined
+    ) {
+      userAvatar.push(context?.userData?.avatar);
+      setPreviews(userAvatar);
+    } else {
+      setPreviews([]);
+    }
+  }, [context?.userData]);
+
+  let selectedImages = [];
+
+  const formdata = new FormData();
+
+  const onChangeFile = async (e, apiEndPoint) => {
+    try {
+      setPreviews([]);
+      const files = e.target.files;
+      setUploading(true);
+      for (let i = 0; i < files.length; i++) {
+        if (
+          files[i] &&
+          (files[i].type === "image/jpeg" ||
+            files[i].type === "image/jpg" ||
+            files[i].type === "image/png" ||
+            files[i].type === "image/webp")
+        ) {
+          const file = files[i];
+          selectedImages.push(file);
+          formdata.append(`avatar`, file);
+        } else {
+          context.openAlertBox(
+            "error",
+            "Please select a valid JPG, PNG or webp image file.",
+          );
+          setUploading(false);
+          return false;
+        }
+      }
+      uploadImage("/api/user/user-avatar", formdata).then((res) => {
+        setUploading(false);
+        let avatar = [];
+        avatar.push(res?.data?.avatar);
+        setPreviews(avatar);
+      });
+    } catch (error) {
+      setUploading(false);
+      context.openAlertBox("error", "Upload failed");
+    }
+  };
+
   return (
     <div className="card bg-white shadow-md rounded-md sticky top-[10px]">
       <div className="w-full p-5 flex items-center justify-center flex-col">
-        <div className="w-[110px] h-[110px] rounded-full overflow-hidden mb-4 relative group">
-          <img
-            src="https://www.iimb.ac.in/sites/default/files/inline-images/Sankalp-Nandanwar.jpg"
-            className="w-full h-full object-cover"
-          />
+        <div
+          className="w-[110px] h-[110px] rounded-full overflow-hidden mb-4 relative group flex
+        items-center justify-center bg-gray-200"
+        >
+          {uploading === true ? (
+            <CircularProgress color="inherit" />
+          ) : (
+            <>
+              {previews?.length !== 0 ? (
+                previews?.map((img, index) => {
+                  return (
+                    <img
+                      src={img}
+                      key={index}
+                      className="w-full h-full object-cover"
+                      alt="avatar"
+                    />
+                  );
+                })
+              ) : (
+                <img
+                  src={"/user.png"}
+                  className="w-full h-full object-cover"
+                  alt="avatar"
+                />
+              )}
+            </>
+          )}
 
           <div
             className="overlay w-[100%] h-[100%] absolute top-0 left-0 z-50 bg-[rgba(0,0,0,0.7)] flex 
@@ -25,12 +110,15 @@ const AccountSideBar = () => {
             <input
               type="file"
               className="absolute top-0 left-0 w-full h-full opacity-0"
+              accept="image/*"
+              onChange={(e) => onChangeFile(e, "/api/user/user-avatar")}
+              name="avatar"
             />
           </div>
         </div>
 
-        <h3>Rahul Kumar</h3>
-        <h6 className="text-[13px] font-[500]">rahul@gmail.com</h6>
+        <h3>{context?.userData?.name}</h3>
+        <h6 className="text-[13px] font-[500]">{context?.userData?.email}</h6>
       </div>
 
       <ul className="list-none pb-5 bg-[#f1f1f1] myAccountTabs">

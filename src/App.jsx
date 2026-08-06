@@ -33,8 +33,8 @@ function App() {
   const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState("lg");
-  const[isLogin, setIsLogin] = useState(false);
-  const[userData, setUserData] = useState(null);
+  const [isLogin, setIsLogin] = useState(false);
+  const [userData, setUserData] = useState(null);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -47,21 +47,27 @@ function App() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    
-    if(token !== undefined && token !== null && token !== ""){
+    const token = localStorage.getItem("accessToken");
+
+    if (token !== undefined && token !== null && token !== "") {
       setIsLogin(true);
 
       fetchDataFromApi("/api/user/user-details").then((res) => {
-        console.log(res);
         setUserData(res.data);
-      })
-
-    }else{
+        if (res?.response?.data?.error === true) {
+          if (res?.response?.data?.message === "You have not login") {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            openAlertBox("error", "Your session is closed please login again");
+            window.location.href = "/login";
+            setIsLogin(false);
+          }
+        }
+      });
+    } else {
       setIsLogin(false);
     }
-
-  },[isLogin])
+  }, [isLogin]);
 
   const openAlertBox = (status, msg) => {
     if (status === "success") {
@@ -81,7 +87,7 @@ function App() {
     isLogin,
     setIsLogin,
     setUserData,
-    userData
+    userData,
   };
 
   return (
