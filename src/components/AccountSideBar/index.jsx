@@ -9,6 +9,8 @@ import { FaRegHeart } from "react-icons/fa";
 import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { uploadImage } from "../../utils/api";
+import { LuMapPin } from "react-icons/lu";
+
 
 const AccountSideBar = () => {
   const [previews, setPreviews] = useState([]);
@@ -130,6 +132,16 @@ const AccountSideBar = () => {
             </Button>
           </NavLink>
         </li>
+
+        <li className="w-full">
+          <NavLink to="/address" exact={true} activeClassName="isActive">
+            <Button className="w-full !text-left !px-5 !py-2 !justify-start !capitalize !text-[rgba(0,0,0,0.8)] !rounded-none flex items-center gap-2">
+              <LuMapPin className="text-[18px]" />
+              Address
+            </Button>
+          </NavLink>
+        </li>
+
 
         <li className="w-full">
           <NavLink to="/my-list" exact={true} activeClassName="isActive">

@@ -7,12 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { editData, postData } from "../../utils/api";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Collapse } from "react-collapse";
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 const MyAccount = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
   const [userId, setUserId] = useState("");
   const [isOpenCategoryFilter, setIsOpenCategoryFilter] = useState(false);
+  const [phone, setPhone] = useState("");
 
   const [formFields, setFormFields] = useState({
     name: "",
@@ -149,6 +152,7 @@ const MyAccount = () => {
         email: context?.userData?.email,
         mobile: context?.userData?.mobile,
       });
+      setPhone(`${context?.userData?.mobile || ""}`);
       setChangePassword({ email: context?.userData?.email });
     }
   }, [context?.userData]);
@@ -166,9 +170,7 @@ const MyAccount = () => {
               <h2 className="pb-3">My Profile</h2>
               <Button
                 className="!ml-auto"
-                onClick={() =>
-                  setIsOpenCategoryFilter(!isOpenCategoryFilter)
-                }
+                onClick={() => setIsOpenCategoryFilter(!isOpenCategoryFilter)}
               >
                 Change Password
               </Button>
@@ -207,14 +209,13 @@ const MyAccount = () => {
 
               <div className="flex items-center mt-4 gap-5">
                 <div className="w-[50%]">
-                  <TextField
-                    label="Phone Number"
-                    variant="outlined"
-                    size="small"
-                    className="w-full"
-                    name="mobile"
-                    value={formFields.mobile}
-                    onChange={onChangeInput}
+                  <PhoneInput
+                    defaultCountry="in"
+                    value={phone}
+                    onChange={(phone) => {
+                      setPhone(phone);
+                      setFormFields({ ...formFields, mobile: phone });
+                    }}
                     disabled={isLoading === true ? true : false}
                   />
                 </div>
@@ -238,78 +239,77 @@ const MyAccount = () => {
             </form>
           </div>
 
-            <Collapse isOpened={isOpenCategoryFilter}>
-              <div className="card bg-white p-5 shadow-md rounded-md">
-                <div className="flex items-center pb-3">
-                  <h2 className="pb-3">Change Password</h2>
-                </div>
-                <hr />
-
-                <form className="mt-8" onSubmit={handleSubmitChangePassword}>
-                  <div className="flex items-center gap-5">
-                    <div className="w-[50%]">
-                      <TextField
-                        type="text"
-                        label="Old Password"
-                        variant="outlined"
-                        size="small"
-                        className="w-full"
-                        name="oldPassword"
-                        value={changePassword.oldPassword}
-                        onChange={onChangePassword}
-                        disabled={isLoading2 === true ? true : false}
-                      />
-                    </div>
-
-                    <div className="w-[50%]">
-                      <TextField
-                        type="text"
-                        label="New Password"
-                        variant="outlined"
-                        size="small"
-                        className="w-full"
-                        name="newPassword"
-                        value={changePassword.newPassword}
-                        onChange={onChangePassword}
-                        disabled={isLoading2 === true ? true : false}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center mt-4 gap-5">
-                    <div className="w-[50%]">
-                      <TextField
-                        label="Confirm Password"
-                        variant="outlined"
-                        size="small"
-                        className="w-full"
-                        name="confirmPassword"
-                        value={changePassword.confirmPassword}
-                        onChange={onChangePassword}
-                        disabled={isLoading2 === true ? true : false}
-                      />
-                    </div>
-                  </div>
-
-                  <br />
-
-                  <div className="flex items-center gap-4">
-                    <Button
-                      type="submit"
-                      disabled={!valideValue2}
-                      className="btn-org btn-sm w-[170px]"
-                    >
-                      {isLoading2 === true ? (
-                        <CircularProgress color="inherit" />
-                      ) : (
-                        "Change Password"
-                      )}
-                    </Button>
-                  </div>
-                </form>
+          <Collapse isOpened={isOpenCategoryFilter}>
+            <div className="card bg-white p-5 shadow-md rounded-md">
+              <div className="flex items-center pb-3">
+                <h2 className="pb-3">Change Password</h2>
               </div>
-            </Collapse>
-          
+              <hr />
+
+              <form className="mt-8" onSubmit={handleSubmitChangePassword}>
+                <div className="flex items-center gap-5">
+                  <div className="w-[50%]">
+                    <TextField
+                      type="text"
+                      label="Old Password"
+                      variant="outlined"
+                      size="small"
+                      className="w-full"
+                      name="oldPassword"
+                      value={changePassword.oldPassword}
+                      onChange={onChangePassword}
+                      disabled={isLoading2 === true ? true : false}
+                    />
+                  </div>
+
+                  <div className="w-[50%]">
+                    <TextField
+                      type="text"
+                      label="New Password"
+                      variant="outlined"
+                      size="small"
+                      className="w-full"
+                      name="newPassword"
+                      value={changePassword.newPassword}
+                      onChange={onChangePassword}
+                      disabled={isLoading2 === true ? true : false}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center mt-4 gap-5">
+                  <div className="w-[50%]">
+                    <TextField
+                      label="Confirm Password"
+                      variant="outlined"
+                      size="small"
+                      className="w-full"
+                      name="confirmPassword"
+                      value={changePassword.confirmPassword}
+                      onChange={onChangePassword}
+                      disabled={isLoading2 === true ? true : false}
+                    />
+                  </div>
+                </div>
+
+                <br />
+
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="submit"
+                    disabled={!valideValue2}
+                    className="btn-org btn-sm w-[170px]"
+                  >
+                    {isLoading2 === true ? (
+                      <CircularProgress color="inherit" />
+                    ) : (
+                      "Change Password"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </Collapse>
         </div>
       </div>
     </section>

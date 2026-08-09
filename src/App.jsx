@@ -26,6 +26,7 @@ import MyAccount from "./Pages/MyAccount";
 import MyList from "./Pages/MyList";
 import Orders from "./Pages/Orders";
 import { fetchDataFromApi } from "./utils/api";
+import Address from "./Pages/MyAccount/address";
 
 const MyContext = createContext();
 
@@ -35,6 +36,7 @@ function App() {
   const [maxWidth, setMaxWidth] = useState("lg");
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [address, setAddress] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -88,6 +90,8 @@ function App() {
     setIsLogin,
     setUserData,
     userData,
+    setAddress,
+    address
   };
 
   return (
@@ -107,6 +111,7 @@ function App() {
           <Route path="/my-account" element={<MyAccount />} />
           <Route path="/my-list" element={<MyList />} />
           <Route path="/my-orders" element={<Orders />} />
+          <Route path="/address" element={<Address />} />
         </Routes>
         <Footer />
       </MyContext.Provider>

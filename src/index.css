@@ -148,3 +148,9 @@ left: 0px; background: #ff5252; transition: all 0.3s ease-in-out; opacity: 0;}
 .myAccountTabs li a.active button svg{color: #ff5252 !important; opacity: 1 !important;}
 
 button .MuiCircularProgress-root{width: 30px !important; height: 30px !important;}
+
+.react-international-phone-input{width: 100% !important;}
+.react-international-phone-country-selector-button{width: 55px !important;}
+.react-international-phone-input-container{border: 1px solid rgba(0,0,0,0.1) !important;}
+
+.MuiDialog-paper{width: 700px !important; max-width: 700px !important;}
