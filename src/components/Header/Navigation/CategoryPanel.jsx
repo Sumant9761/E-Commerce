@@ -5,11 +5,9 @@ import { IoCloseSharp } from "react-icons/io5";
 import CategoryCollapse from "../../CategoryCollapse";
 
 const CategoryPanel = (props) => {
-
   const toggleDrawer = (newOpen) => () => {
     props.setIsOpenCatPanel(newOpen);
   };
-
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" className="categoryPanel">
@@ -20,8 +18,7 @@ const CategoryPanel = (props) => {
           className="cursor-pointer text-[20px]"
         />
       </h3>
-
-      <CategoryCollapse />
+      {props?.data?.length !== 0 && <CategoryCollapse data={props?.data} />}
     </Box>
   );
 

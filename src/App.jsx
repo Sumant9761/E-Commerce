@@ -31,17 +31,31 @@ import Address from "./Pages/MyAccount/address";
 const MyContext = createContext();
 
 function App() {
-  const [openProductDetailsModel, setOpenProductDetailsModel] = useState(false);
+  const [openProductDetailsModel, setOpenProductDetailsModel] = useState({
+    open: false,
+    item: {},
+  });
   const [fullWidth, setFullWidth] = useState(true);
   const [maxWidth, setMaxWidth] = useState("lg");
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [catData, setCatData] = useState([]);
   const [address, setAddress] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
+  const handleOpenProductDetailsModel = (status, item) => {
+    setOpenProductDetailsModel({
+      open: status,
+      item: item,
+    });
+  };
+
   const handleCloseProductDetailsModel = () => {
-    setOpenProductDetailsModel(false);
+    setOpenProductDetailsModel({
+      open: false,
+      item: {},
+    });
   };
 
   const toggleCartPanel = (newOpen) => () => {
@@ -71,6 +85,14 @@ function App() {
     }
   }, [isLogin]);
 
+  useEffect(() => {
+    fetchDataFromApi("/api/category").then((res) => {
+      if (res?.error === false) {
+        setCatData(res?.data);
+      }
+    });
+  }, []);
+
   const openAlertBox = (status, msg) => {
     if (status === "success") {
       toast.success(msg);
@@ -82,6 +104,7 @@ function App() {
 
   const values = {
     setOpenProductDetailsModel,
+    handleOpenProductDetailsModel,
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
@@ -91,7 +114,9 @@ function App() {
     setUserData,
     userData,
     setAddress,
-    address
+    address,
+    setCatData,
+    catData,
   };
 
   return (
@@ -119,7 +144,7 @@ function App() {
       <Toaster />
 
       <Dialog
-        open={openProductDetailsModel}
+        open={openProductDetailsModel.open}
         fullWidth={fullWidth}
         maxWidth={maxWidth}
         onClose={handleCloseProductDetailsModel}
@@ -130,18 +155,23 @@ function App() {
         <DialogContent>
           <div className="flex items-center w-full productDetailsModalContainer relative">
             <Button
-              className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[0px] right-[0px] !bg-[#f1f1f1]"
+              className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[0px] 
+              right-[0px] !bg-[#f1f1f1]"
               onClick={handleCloseProductDetailsModel}
             >
               <IoCloseSharp className="text-[20px]" />
             </Button>
-            <div className="col1 w-[40%]">
-              <ProductZoom />
-            </div>
+            {openProductDetailsModel?.item?.length !== 0 && (
+              <>
+                <div className="col1 w-[40%] px-3 py-6">
+                  <ProductZoom images={openProductDetailsModel?.item?.images} />
+                </div>
 
-            <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">
-              <ProductDetailsComponent />
-            </div>
+                <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">
+                  <ProductDetailsComponent item={openProductDetailsModel?.item} />
+                </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
