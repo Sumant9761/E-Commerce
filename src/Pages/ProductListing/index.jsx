@@ -10,10 +10,16 @@ import { LuMenu } from "react-icons/lu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Pagination from "@mui/material/Pagination";
-
+import ProductLoadingGrid from "../../components/ProductLoading/productLoadingGrid";
+import { postData } from "../../utils/api";
 
 const ProductListing = () => {
   const [itemView, setItemView] = useState("grid");
+  const [productData, setProductData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedSortVal, setSelectedSortVal] = useState("Name, A to Z");
 
   const id = React.useId();
   const buttonId = `${id}-button`;
@@ -25,6 +31,18 @@ const ProductListing = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleSortBy = (name, order, products, value) => {
+    setSelectedSortVal(value);
+    postData(`/api/product/sortBy`, {
+      products: products,
+      sortBy: name,
+      order: order,
+    }).then((res) => {
+      setProductData(res);
+      setAnchorEl(null);
+    });
   };
 
   return (
@@ -52,12 +70,20 @@ const ProductListing = () => {
 
       <div className="bg-white p-2 mt-4">
         <div className="container flex gap-3">
-          <div className="sidebarWrapper w-[20%] h-full bg-white">
-            <Sidebar />
+          <div className="sidebarWrapper w-[20%] bg-white">
+            <Sidebar
+              productData={productData}
+              setProductData={setProductData}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              page={page}
+              setTotalPages={setTotalPages}
+            />
           </div>
 
           <div className="rightContent w-[80%] py-3">
-            <div className="bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between">
+            <div className="bg-[#f1f1f1] p-2 w-full mb-4 rounded-md flex items-center justify-between 
+            sticky top-[130px] z-[99]">
               <div className="col1 flex items-center itemViewActions">
                 <Button
                   className={`!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] ${itemView === "list" && "active"}`}
@@ -73,7 +99,9 @@ const ProductListing = () => {
                 </Button>
 
                 <span className="text-[14px] font-[500] pl-3 text-[rgba(0,0,0,0.7)]">
-                  There are 27 products.
+                  There are{" "}
+                  {productData?.products?.length !== 0 ? productData?.products?.length : 0}{" "}
+                  products.
                 </span>
               </div>
 
@@ -90,7 +118,7 @@ const ProductListing = () => {
                   onClick={handleClick}
                   className="!bg-white !text-[#000] !capitalize !border-2 !border-[#000]"
                 >
-                  Sales, highest to lowest
+                  {selectedSortVal}
                 </Button>
                 <Menu
                   id={menuId}
@@ -104,37 +132,33 @@ const ProductListing = () => {
                   }}
                 >
                   <MenuItem
-                    onClick={handleClose}
-                    className="!text-[14px] !text-[#000] !capitalize"
-                  >
-                    Sales, highest to lowest
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
-                    className="!text-[14px] !text-[#000] !capitalize"
-                  >
-                    Relevance
-                  </MenuItem>
-                  <MenuItem
-                    onClick={handleClose}
+                    onClick={() =>
+                      handleSortBy("name", "asc", productData, "Name, A to Z")
+                    }
                     className="!text-[14px] !text-[#000] !capitalize"
                   >
                     Name, A to Z
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
+                    onClick={() =>
+                      handleSortBy("name", "desc", productData, "Name, Z to A")
+                    }
                     className="!text-[14px] !text-[#000] !capitalize"
                   >
                     Name, Z to A
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
+                    onClick={() =>
+                      handleSortBy("name", "asc", productData, "Price, low to high")
+                    }
                     className="!text-[14px] !text-[#000] !capitalize"
                   >
                     Price, low to high
                   </MenuItem>
                   <MenuItem
-                    onClick={handleClose}
+                    onClick={() =>
+                      handleSortBy("name", "desc", productData, "Price, high to low")
+                    }
                     className="!text-[14px] !text-[#000] !capitalize"
                   >
                     Price, high to low
@@ -144,36 +168,44 @@ const ProductListing = () => {
             </div>
 
             <div
-              className={`grid ${itemView === "grid" ? "grid-cols-4 md:grid-cols-4" : "grid-cols-1 md:grid-cols-1"}  gap-4`}
+              className={`grid ${itemView === "grid" ? "grid-cols-5 md:grid-cols-5" : "grid-cols-1 md:grid-cols-1"}  gap-4`}
             >
               {itemView === "grid" ? (
                 <>
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
-                  <ProductItem />
+                  {isLoading === true ? (
+                    <ProductLoadingGrid view={itemView} />
+                  ) : (
+                    productData?.products?.length !== 0 &&
+                    productData?.products?.map((item, index) => {
+                      return <ProductItem key={index} item={item} />;
+                    })
+                  )}
                 </>
               ) : (
                 <>
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
-                  <ProductItemListView />
+                  {isLoading === true ? (
+                    <ProductLoadingGrid view={itemView} />
+                  ) : (
+                    productData?.products?.length !== 0 &&
+                    productData?.products?.map((item, index) => {
+                      return <ProductItemListView key={index} item={item} />;
+                    })
+                  )}
                 </>
               )}
             </div>
 
-            <div className="flex items-center justify-center mt-10">
-              <Pagination count={10} showFirstButton showLastButton />
-            </div>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center mt-10">
+                <Pagination
+                  showFirstButton
+                  showLastButton
+                  count={totalPages}
+                  page={page}
+                  onChange={(e, value) => setPage(value)}
+                />
+              </div>
+            )}
           </div>
         </div>
       </div>

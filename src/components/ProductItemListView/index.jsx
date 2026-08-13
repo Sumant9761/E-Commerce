@@ -9,30 +9,32 @@ import { MdZoomOutMap } from "react-icons/md";
 import { GrCart } from "react-icons/gr";
 import { MyContext } from "../../App";
 
-const ProductItemListView = () => {
+const ProductItemListView = (props) => {
   const context = useContext(MyContext);
 
   return (
     <div className="productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)] flex items-center">
       <div className="group imgWrapper w-[25%] rounded-md overflow-hidden relative">
         <Link to="/">
-          <div className="img h-[250px] overflow-hidden">
-            <img src="RedKurti1.jpg" className="w-full" />
+          <div className="img overflow-hidden">
+            <img src={props?.item?.images[0]} className="w-full" />
             <img
-              src="RedKurti2.jpg"
+              src={props?.item?.images[1]}
               className="w-full transition-all duration-300 absolute top-0 left-0 opacity-0 group-hover:opacity-100 group-hover:scale-100"
             />
           </div>
         </Link>
 
         <span className="discount flex items-center absolute top-[10px] left-[10px] z-50 bg-primary text-white rounded-lg p-1 text-[12px] font-[500]">
-          10%
+          {props?.item?.discount}%
         </span>
 
         <div className="actions absolute top-[-200px] right-[5px] z-50 flex items-center gap-4 flex-col w-[50px] transition-all duration-300 group-hover:top-[15px] opacity-0 group-hover:opacity-100">
           <Button
             className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary hover:text-white group"
-            onClick={() => context.setOpenProductDetailsModel(true)}
+            onClick={() =>
+              context.setOpenProductDetailsModel(true, props?.item)
+            }
           >
             <MdZoomOutMap className="text-[18px] !text-black group-hover:text-white hover:text-white" />
           </Button>
@@ -49,30 +51,32 @@ const ProductItemListView = () => {
 
       <div className="info p-3 py-5 px-8 w-[75%]">
         <h6 className="text-[15px] !font-[400]">
-          <Link to="/" className="link transition-all">
-            Soylent Green
-          </Link>
+          <span className="link transition-all">{props?.item?.brand}</span>
         </h6>
         <h3 className="text-[18px] title mt-3 mb-3 font-[500] mb-1 text-[#000]">
-          <Link to="/" className="link transition-all">
-            Nermosa Women Red Printed Viscose Rayon Kurta Pant And Dupatta Set
+          <Link
+            to={`/product/${props?.item?._id}`}
+            className="link transition-all"
+          >
+            {props?.item?.name?.substr(0, 40) + "..."}
           </Link>
         </h3>
 
-        <p className="text-[14px] mb-3">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since 1966, when designers at Letraset and James Mosley.
-        </p>
+        <p className="text-[14px] mb-3">{props?.item?.description}</p>
 
-        <Rating name="size-small" defaultValue={4} size="small" readOnly />
+        <Rating
+          name="size-small"
+          defaultValue={props?.item?.rating}
+          size="small"
+          readOnly
+        />
 
         <div className="flex items-center gap-4">
           <span className="oldPrice line-through text-gray-500 text-[15px] font-[500]">
-            $58.00
+            &#x20b9; {props?.item?.oldPrice}
           </span>
           <span className="price text-primary text-[15px] font-[600]">
-            $58.00
+            &#x20b9; {props?.item?.price}
           </span>
         </div>
 

@@ -9,6 +9,12 @@ import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { postData } from "../../utils/api";
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from "../../firebase";
+
+const auth = getAuth(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,7 +37,7 @@ const Login = () => {
       localStorage.setItem("actionType", "forgot-password");
 
       postData("/api/user/forgot-password", {
-        email: formFields.email
+        email: formFields.email,
       }).then((res) => {
         if (res.error === false) {
           context.openAlertBox("success", res.message);
@@ -91,6 +97,36 @@ const Login = () => {
         }
       },
     );
+  };
+
+  const authwithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        const fields = {
+          name: user.providerData[0].displayName,
+          email: user.providerData[0].email,
+          password: null,
+          avatar: user.providerData[0].photoURL,
+          mobile: user.providerData[0].phoneNumber,
+          role: "USER",
+        };
+        postData("/api/user/authWithGoogle", fields).then((res) => {
+          if (res?.error !== true) {
+            setIsLoading(false);
+            context.openAlertBox("success", res?.message);
+            localStorage.setItem("userEmail", fields.email);
+            localStorage.setItem("accessToken", res?.data?.accessToken);
+            localStorage.setItem("refreshToken", res?.data?.refreshToken);
+            history("/");
+            context?.setIsLogin(true);
+          } else {
+            setIsLoading(false);
+            context.openAlertBox("error", res?.message);
+          }
+        });
+      })
+      .catch(() => {});
   };
 
   return (
@@ -175,7 +211,10 @@ const Login = () => {
               or continue with social account
             </p>
 
-            <Button className="flex gap-3 w-full !bg-[f1f1f1] btn-lg !text-black">
+            <Button
+              className="flex gap-3 w-full !bg-[f1f1f1] btn-lg !text-black"
+              onClick={authwithGoogle}
+            >
               <FcGoogle className="text-[20px]" /> Login with google
             </Button>
           </form>

@@ -10,6 +10,12 @@ import { MyContext } from "../../App";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { firebaseApp } from "../../firebase";
+
+const auth = getAuth(firebaseApp);
+const googleProvider = new GoogleAuthProvider();
+
 const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -54,8 +60,7 @@ const Register = () => {
     }
 
     postData("/api/user/register", formFields).then((res) => {
-
-      if(res.error !== true){
+      if (res.error !== true) {
         setIsLoading(false);
         context.openAlertBox("success", res.message);
         localStorage.setItem("userEmail", formFields.email);
@@ -64,13 +69,43 @@ const Register = () => {
           email: "",
           password: "",
         });
-        
+
         history("/verify");
-      }else{
+      } else {
         context.openAlertBox("error", res?.message);
         setIsLoading(false);
       }
     });
+  };
+
+  const authwithGoogle = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
+        const fields = {
+          name: user.providerData[0].displayName,
+          email: user.providerData[0].email,
+          password: null,
+          avatar: user.providerData[0].photoURL,
+          mobile: user.providerData[0].phoneNumber,
+          role: "USER",
+        };
+        postData("/api/user/authWithGoogle", fields).then((res) => {
+          if (res?.error !== true) {
+            setIsLoading(false);
+            context.openAlertBox("success", res?.message);
+            localStorage.setItem("userEmail", fields.email);
+            localStorage.setItem("accessToken", res?.data?.accessToken);
+            localStorage.setItem("refreshToken", res?.data?.refreshToken);
+            history("/");
+            context?.setIsLogin(true);
+          } else {
+            setIsLoading(false);
+            context.openAlertBox("error", res?.message);
+          }
+        });
+      })
+      .catch(() => {});
   };
 
   return (
@@ -162,7 +197,10 @@ const Register = () => {
               or continue with social account
             </p>
 
-            <Button className="flex gap-3 w-full !bg-[f1f1f1] btn-lg !text-black">
+            <Button
+              className="flex gap-3 w-full !bg-[f1f1f1] btn-lg !text-black"
+              onClick={authwithGoogle}
+            >
               <FcGoogle className="text-[20px]" /> Sign up with google
             </Button>
           </form>

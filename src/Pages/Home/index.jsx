@@ -27,10 +27,14 @@ const Home = () => {
   const [popularProduct, setPopularProduct] = useState([]);
   const [allProductData, setAllProductData] = useState([]);
   const [allFeaturedProductData, setAllFeaturedProductData] = useState([]);
+  const [bannerV1Data, setBannerV1Data] = useState([]);
+  const [blogData, setBlogData] = useState([]);
 
   const context = useContext(MyContext);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     fetchDataFromApi("/api/homeSlides").then((res) => {
       setHomeSlidesData(res?.data);
     });
@@ -39,6 +43,12 @@ const Home = () => {
     });
     fetchDataFromApi("/api/product/getAllFeaturedProducts").then((res) => {
       setAllFeaturedProductData(res?.products);
+    });
+    fetchDataFromApi("/api/bannerV1").then((res) => {
+      setBannerV1Data(res?.data);
+    });
+    fetchDataFromApi("/api/blog").then((res) => {
+      setBlogData(res?.blogs);
     });
   }, []);
 
@@ -68,8 +78,6 @@ const Home = () => {
   return (
     <>
       {homeSlidesData?.length !== 0 && <HomeSlider data={homeSlidesData} />}
-
-      
 
       {context?.catData?.length !== 0 && (
         <HomeCatSlider data={context?.catData} />
@@ -117,10 +125,9 @@ const Home = () => {
       <section className="py-6">
         <div className="container flex gap-5">
           <div className="part1 w-[70%]">
-            {
-              allProductData?.length !== 0 && <HomeBannerV2 data={allProductData} />
-            }
-            
+            {allProductData?.length !== 0 && (
+              <HomeBannerV2 data={allProductData} />
+            )}
           </div>
 
           <div className="part2 w-[30%] flex items-center gap-5 justify-between flex-col">
@@ -149,7 +156,9 @@ const Home = () => {
             <p className="font-bold text-[25px]">- Only $200*</p>
           </div>
 
-          <AdsBannerSliderV2 items={4} />
+          {bannerV1Data?.length !== 0 && (
+            <AdsBannerSliderV2 items={4} data={bannerV1Data} />
+          )}
         </div>
       </section>
 
@@ -181,34 +190,28 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-5 pb-8 pt-0 bg-white blogSection">
-        <div className="container">
-          <h2 className="text-[20px] font-[600] mb-4">From The Blog</h2>
-          <Swiper
-            slidesPerView={4}
-            spaceBetween={30}
-            navigation={true}
-            modules={[Navigation]}
-            className="blogSlider"
-          >
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <BlogItem />
-            </SwiperSlide>
-          </Swiper>
-        </div>
-      </section>
+      {blogData?.length !== 0 && (
+        <section className="py-5 pb-8 pt-0 bg-white blogSection">
+          <div className="container">
+            <h2 className="text-[20px] font-[600] mb-4">From The Blog</h2>
+            <Swiper
+              slidesPerView={4}
+              spaceBetween={30}
+              navigation={true}
+              modules={[Navigation]}
+              className="blogSlider"
+            >
+              {blogData?.map((item, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <BlogItem item={item} />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          </div>
+        </section>
+      )}
     </>
   );
 };
