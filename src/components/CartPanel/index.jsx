@@ -1,111 +1,63 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { Button } from "@mui/material";
+import { MyContext } from "../../App";
+import { deleteData } from "../../utils/api";
 
-const CartPanel = () => {
+const CartPanel = (props) => {
+  const context = useContext(MyContext);
+
+  const removeItem = (id) => {
+    deleteData(`/api/cart/delete-cart-item/${id}`).then((res) => {
+      context?.openAlertBox("success", res?.message);
+      context?.getCartItems();
+    });
+  };
+
   return (
     <>
       <div className="scroll w-full max-h-[300px] overflow-y-scroll overflow-x-hidden py-3 px-4">
-        <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
-          <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
-            <Link to="/product/8545" className="block group">
-              <img src="/RedKurti3.jpg" className="w-full group-hover:scale-105" />
-            </Link>
-          </div>
+        {props?.data?.map((item, index) => {
+          return (
+            <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
+              <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
+                <Link to={`/product/${item?._id}`} className="block group">
+                  <img
+                    src={item?.image}
+                    className="w-full group-hover:scale-105"
+                  />
+                </Link>
+              </div>
 
-          <div className="info w-[75%] pr-5 relative">
-            <h4 className="text-[14px] font-[500]">
-              <Link to="/product/8545" className="link transition-all">
-                A-Line Kurti with Sharara & Dupatta
-              </Link>
-            </h4>
+              <div className="info w-[75%] pr-5 relative pt-3">
+                <h4 className="text-[14px] font-[500]">
+                  <Link
+                    to={`/product/${item?._id}`}
+                    className="link transition-all"
+                  >
+                    {item?.productTitle?.substr(0, 40) + "..."}
+                  </Link>
+                </h4>
 
-            <p className="flex items-center gap-5 mt-2 mb-2">
-              <span>
-                Qty : <span>2</span>
-              </span>
-              <span className="text-primary font-bold">Price : $30</span>
-            </p>
+                <p className="flex items-center gap-5 mt-2 mb-2">
+                  <span>
+                    Qty : <span>{item?.quantity}</span>
+                  </span>
+                  <span className="text-primary font-bold">
+                    Price : &#x20b9; {item?.price}
+                  </span>
+                </p>
 
-            <MdOutlineDeleteOutline className="absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all" />
-          </div>
-        </div>
-
-        <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
-          <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
-            <Link to="/product/8545" className="block group">
-              <img src="/RedKurti3.jpg" className="w-full group-hover:scale-105" />
-            </Link>
-          </div>
-
-          <div className="info w-[75%] pr-5 relative">
-            <h4 className="text-[14px] font-[500]">
-              <Link to="/product/8545" className="link transition-all">
-                A-Line Kurti with Sharara & Dupatta
-              </Link>
-            </h4>
-
-            <p className="flex items-center gap-5 mt-2 mb-2">
-              <span>
-                Qty : <span>2</span>
-              </span>
-              <span className="text-primary font-bold">Price : $30</span>
-            </p>
-
-            <MdOutlineDeleteOutline className="absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all" />
-          </div>
-        </div>
-
-        <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
-          <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
-            <Link to="/product/8545" className="block group">
-              <img src="/RedKurti3.jpg" className="w-full group-hover:scale-105" />
-            </Link>
-          </div>
-
-          <div className="info w-[75%] pr-5 relative">
-            <h4 className="text-[14px] font-[500]">
-              <Link to="/product/8545" className="link transition-all">
-                A-Line Kurti with Sharara & Dupatta
-              </Link>
-            </h4>
-
-            <p className="flex items-center gap-5 mt-2 mb-2">
-              <span>
-                Qty : <span>2</span>
-              </span>
-              <span className="text-primary font-bold">Price : $30</span>
-            </p>
-
-            <MdOutlineDeleteOutline className="absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all" />
-          </div>
-        </div>
-
-        <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
-          <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
-            <Link to="/product/8545" className="block group">
-              <img src="/RedKurti3.jpg" className="w-full group-hover:scale-105" />
-            </Link>
-          </div>
-
-          <div className="info w-[75%] pr-5 relative">
-            <h4 className="text-[14px] font-[500]">
-              <Link to="/product/8545" className="link transition-all">
-                A-Line Kurti with Sharara & Dupatta
-              </Link>
-            </h4>
-
-            <p className="flex items-center gap-5 mt-2 mb-2">
-              <span>
-                Qty : <span>2</span>
-              </span>
-              <span className="text-primary font-bold">Price : $30</span>
-            </p>
-
-            <MdOutlineDeleteOutline className="absolute top-[10px] right-[10px] cursor-pointer text-[20px] link transition-all" />
-          </div>
-        </div>
+                <MdOutlineDeleteOutline
+                  className="absolute top-[10px] right-[10px] cursor-pointer 
+                text-[20px] link transition-all"
+                  onClick={() => removeItem(item?._id)}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <br />
@@ -113,25 +65,38 @@ const CartPanel = () => {
       <div className="bottomSec absolute bottom-[10px] left-[10px] w-full overflow-hidden pr-5">
         <div className="bottomInfo py-3 px-4 w-full border-t border-[rgba(0,0,0,0.2)] flex items-center justify-between flex-col">
           <div className="flex items-center justify-between w-full">
-            <span className="text-[14px] font-[600]">1 Item</span>
-            <span className="text-primary font-bold">$90.00</span>
-          </div>
-
-          <div className="flex items-center justify-between w-full">
-            <span className="text-[14px] font-[600]">Shipping</span>
-            <span className="text-primary font-bold">$7.00</span>
+            <span className="text-[14px] font-[600]">
+              {context?.cartData?.length} Items
+            </span>
+            <span className="text-primary font-bold">
+              {" "}
+              {(context?.cartData?.length !== 0
+                ? context?.cartData
+                    ?.map((item) => parseInt(item?.price) * item.quantity)
+                    .reduce((total, value) => total + value, 0)
+                : 0
+              )?.toLocaleString("en-US", {
+                style: "currency",
+                currency: "INR",
+              })}
+            </span>
           </div>
         </div>
 
         <div className="bottomInfo py-3 px-4 w-full border-t border-[rgba(0,0,0,0.2)] flex items-center justify-between flex-col">
           <div className="flex items-center justify-between w-full">
             <span className="text-[14px] font-[600]">Total(tax excl.)</span>
-            <span className="text-primary font-bold">$95.00</span>
-          </div>
-
-          <div className="flex items-center justify-between w-full">
-            <span className="text-[14px] font-[600]">Taxes</span>
-            <span className="text-primary font-bold">$0.00</span>
+            <span className="text-primary font-bold">
+              {(context?.cartData?.lenght !== 0
+                ? context?.cartData
+                    ?.map((item) => parseInt(item?.price) * item.quantity)
+                    .reduce((total, value) => total + value, 0)
+                : 0
+              )?.toLocaleString("en-US", {
+                style: "currency",
+                currency: "INR",
+              })}
+            </span>
           </div>
 
           <br />
@@ -141,7 +106,9 @@ const CartPanel = () => {
               <Button className="btn-org btn-lg w-full">View Cart</Button>
             </Link>
             <Link to="/checkout" className="w-[50%] d-block">
-              <Button className="btn-org btn-border btn-lg w-full">Checkout</Button>
+              <Button className="btn-org btn-border btn-lg w-full">
+                Checkout
+              </Button>
             </Link>
           </div>
         </div>

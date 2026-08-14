@@ -43,6 +43,7 @@ const Header = () => {
         context.setIsLogin(false);
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
+        context?.setUserData(null);
         history("/");
       }
     });
@@ -231,7 +232,10 @@ const Header = () => {
                     aria-label="cart"
                     onClick={() => context.setOpenCartPanel(true)}
                   >
-                    <Badge badgeContent={8} color="primary">
+                    <Badge
+                      badgeContent={context?.cartData?.length !== 0 ? context?.cartData?.length : 0}
+                      color="primary"
+                    >
                       <IoCart />
                     </Badge>
                   </IconButton>

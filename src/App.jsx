@@ -25,7 +25,7 @@ import Checkout from "./Pages/Checkout";
 import MyAccount from "./Pages/MyAccount";
 import MyList from "./Pages/MyList";
 import Orders from "./Pages/Orders";
-import { fetchDataFromApi } from "./utils/api";
+import { fetchDataFromApi, postData } from "./utils/api";
 import Address from "./Pages/MyAccount/address";
 
 const MyContext = createContext();
@@ -41,6 +41,7 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
   const [address, setAddress] = useState([]);
+  const [cartData, setCartData] = useState([]);
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
 
@@ -80,6 +81,7 @@ function App() {
           }
         }
       });
+      getCartItems();
     } else {
       setIsLogin(false);
     }
@@ -102,6 +104,48 @@ function App() {
     }
   };
 
+  const addToCart = (product, userId, quantity) => {
+    if (userId === undefined) {
+      openAlertBox("error", "You are not login so please login first");
+      return false;
+    }
+
+    const data = {
+      productTitle: product?.name,
+      image: product?.images[0],
+      rating: product?.rating,
+      price: product?.price,
+      quantity: quantity,
+      subTotal: parseInt(product?.price * quantity),
+      productId: product?._id,
+      countInStock: product?.countInStock,
+      userId: userId,
+      brand: product?.brand,
+      size: product?.size,
+      weight: product?.productWeight,
+      ram: product?.productRam,
+      oldPrice: product?.oldPrice,
+      discount: product?.discount,
+    };
+
+    postData("/api/cart/add", data).then((res) => {
+      if (res?.error === false) {
+        openAlertBox("success", res?.message);
+        getCartItems();
+      } else {
+        openAlertBox("error", res?.message);
+      }
+    });
+  };
+
+  const getCartItems = () => {
+    fetchDataFromApi(`/api/cart/get`).then((res) => {
+      if (res?.error === false) {
+        setCartData(res?.data);
+      }
+    });
+  };
+
   const values = {
     setOpenProductDetailsModel,
     handleOpenProductDetailsModel,
@@ -117,6 +161,9 @@ function App() {
     address,
     setCatData,
     catData,
+    addToCart,
+    cartData,
+    getCartItems
   };
 
   return (
@@ -168,7 +215,9 @@ function App() {
                 </div>
 
                 <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">
-                  <ProductDetailsComponent item={openProductDetailsModel?.item} />
+                  <ProductDetailsComponent
+                    item={openProductDetailsModel?.item}
+                  />
                 </div>
               </>
             )}

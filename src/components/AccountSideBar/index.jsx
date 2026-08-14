@@ -11,7 +11,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { uploadImage } from "../../utils/api";
 import { LuMapPin } from "react-icons/lu";
 
-
 const AccountSideBar = () => {
   const [previews, setPreviews] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -90,16 +89,11 @@ const AccountSideBar = () => {
                       src={img}
                       key={index}
                       className="w-full h-full object-cover"
-                      alt="avatar"
                     />
                   );
                 })
               ) : (
-                <img
-                  src={"/user.png"}
-                  className="w-full h-full object-cover"
-                  alt="avatar"
-                />
+                <img src={"/user.png"} className="w-full h-full object-cover" />
               )}
             </>
           )}
@@ -141,7 +135,6 @@ const AccountSideBar = () => {
             </Button>
           </NavLink>
         </li>
-
 
         <li className="w-full">
           <NavLink to="/my-list" exact={true} activeClassName="isActive">

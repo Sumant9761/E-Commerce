@@ -1,15 +1,116 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "../ProductItem/style.css";
 import { Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import Button from "@mui/material/Button";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaMinus, FaPlus } from "react-icons/fa";
 import { IoIosGitCompare } from "react-icons/io";
 import { MdZoomOutMap, MdOutlineShoppingCart } from "react-icons/md";
 import { MyContext } from "../../App";
+import { deleteData, editData } from "../../utils/api";
 
 const ProductItem = (props) => {
+  const [quantity, setQuantity] = useState(1);
+  const [isAdded, setIsAdded] = useState(false);
+  const [cartItem, setCartItem] = useState([]);
+  const [activeTab, setActiveTab] = useState(null);
+  const [isShowActiveTab, setIsShowActiveTab] = useState(false);
+  const [selectedTabName, setSelectedTabName] = useState(null);
+
   const context = useContext(MyContext);
+
+  const addToCart = (product, userId, quantity) => {
+    const productItem = {
+      _id: product?._id,
+      productTitle: product?.name,
+      image: product?.images[0],
+      rating: product?.rating,
+      price: product?.price,
+      quantity,
+      subTotal: parseInt(product?.price * quantity),
+      countInStock: product?.countInStock,
+     
+      productId: product?._id,
+      brand: product?.brand,
+      size: selectedTabName,
+      ram: selectedTabName,
+      weight: selectedTabName,
+      oldPrice: product?.oldPrice,
+      discount: product?.discount,
+    };
+    if (props?.item?.size?.length !== 0) {
+      setIsShowActiveTab(true);
+    } else {
+      context?.addToCart(productItem, userId, quantity);
+      setIsAdded(true);
+      setIsShowActiveTab(false);
+    }
+    if (activeTab !== null) {
+      context?.addToCart(productItem, userId, quantity);
+      setIsAdded(true);
+      setIsShowActiveTab(false);
+    }
+  };
+
+  useEffect(() => {
+    const item = context?.cartData?.filter((cartItem) =>
+      cartItem.productId.includes(props?.item?._id),
+    );
+
+    if (item.length !== 0) {
+      setCartItem(item);
+      setIsAdded(true);
+      setQuantity(item[0]?.quantity);
+    } else {
+      setQuantity(1);
+    }
+  }, [context?.cartData]);
+
+  const minusQty = () => {
+    if (quantity !== 1 && quantity > 1) {
+      setQuantity(quantity - 1);
+    } else {
+      setQuantity(1);
+    }
+
+    if (quantity === 1) {
+      deleteData(`/api/cart/delete-cart-item/${cartItem[0]._id}`).then(
+        (res) => {
+          setIsAdded(false);
+          context?.openAlertBox("success", res?.message);
+          context?.getCartItems();
+        },
+      );
+    } else {
+      const obj = {
+        _id: cartItem[0]._id,
+        qty: quantity - 1,
+        subTotal: cartItem[0].price * (quantity - 1),
+      };
+      editData("/api/cart/update-cart-item", obj).then((res) => {
+        context?.getCartItems();
+        context?.openAlertBox("success", res?.data?.message);
+      });
+    }
+  };
+
+  const addQty = () => {
+    setQuantity(quantity + 1);
+    const obj = {
+      _id: cartItem[0]._id,
+      qty: quantity + 1,
+      subTotal: cartItem[0].price * (quantity + 1),
+    };
+    editData("/api/cart/update-cart-item", obj).then((res) => {
+      context?.getCartItems();
+      context?.openAlertBox("success", res?.data?.message);
+    });
+  };
+
+  const handleClickActiveTab = (index, name) => {
+    setActiveTab(index);
+    setSelectedTabName(name);
+  };
 
   return (
     <div className="productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)]">
@@ -24,6 +125,28 @@ const ProductItem = (props) => {
             />
           </div>
         </Link>
+
+        {isShowActiveTab === true && (
+          <div
+            className="flex items-center justify-center absolute top-0 left-0 w-full h-full
+        bg-[rgba(0,0,0,0.7)] z-[60] p-3 gap-2"
+          >
+            {props?.item?.size?.length !== 0 &&
+              props?.item?.size?.map((size, index) => {
+                return (
+                  <span
+                    key={index}
+                    className={`flex items-center justify-center p-1 px-2 bg-[rgba(255,255,255,0.8)] max-w-[35px]
+                  h-[25px] rounded-sm cursor-pointer hover:bg-white 
+                  ${activeTab === index && "!bg-primary text-white"}`}
+                    onClick={() => handleClickActiveTab(index, size)}
+                  >
+                    {size}
+                  </span>
+                );
+              })}
+          </div>
+        )}
 
         <span
           className="discount flex items-center absolute top-[10px] left-[10px] z-50 bg-primary text-white 
@@ -92,13 +215,36 @@ const ProductItem = (props) => {
         </div>
 
         <div className="!absolute bottom-[15px] left-0 pl-3 pr-3 w-full">
-          <Button
-            className="btn-org btn-border flex w-full btn-sm gap-2"
-            size="small"
-          >
-            <MdOutlineShoppingCart className="text-[18px]" />
-            Add to Cart
-          </Button>
+          {isAdded === false ? (
+            <Button
+              className="btn-org btn-border flex w-full btn-sm gap-2"
+              size="small"
+              onClick={() =>
+                addToCart(props?.item, context?.userData?._id, quantity)
+              }
+            >
+              <MdOutlineShoppingCart className="text-[18px]" />
+              Add to Cart
+            </Button>
+          ) : (
+            <div className="flex items-center justify-between overflow-hidden rounded-full border border-gray-300 bg-white w-full">
+              <Button
+                className="!min-w-[35px] !w-[35px] !h-[30px] !bg-[#f1f1f1] !rounded-none"
+                onClick={minusQty}
+              >
+                <FaMinus className="text-[rgba(0,0,0,0.7)]" />
+              </Button>
+              <span className="px-2 sm:px-4 font-semibold text-xs sm:text-base">
+                {quantity}
+              </span>
+              <Button
+                className="!min-w-[35px] !w-[35px] !h-[30px] !bg-primary !rounded-none"
+                onClick={addQty}
+              >
+                <FaPlus className="text-white" />
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>
