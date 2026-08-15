@@ -1,13 +1,93 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import QtyBox from "../QtyBox";
 import Rating from "@mui/material/Rating";
 import { GrCart } from "react-icons/gr";
 import { IoIosGitCompare } from "react-icons/io";
 import { FaRegHeart } from "react-icons/fa";
+import { MyContext } from "../../App";
+import { postData } from "../../utils/api";
+import CircularProgress from "@mui/material/CircularProgress";
+import { TiTickOutline } from "react-icons/ti";
 
 const ProductDetailsComponent = (props) => {
   const [productActionIndex, setProductActionIndex] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedTabName, setSelectedTabName] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tabError, setTabError] = useState(false);
+  const [viewbutton, setViewbutton] = useState(false);
+
+  const context = useContext(MyContext);
+
+  const handleSelectQty = (qty) => {
+    setQuantity(qty);
+  };
+
+  const handleClickActiveTab = (index, item) => {
+    setProductActionIndex(index);
+    setSelectedTabName(item);
+  };
+
+  const addToCart = (product, userId, quantity) => {
+    if (userId === undefined) {
+      openAlertBox("error", "You are not login so please login first");
+      return false;
+    }
+
+    const productItem = {
+      _id: product?._id,
+      productTitle: product?.name,
+      image: product?.images[0],
+      rating: product?.rating,
+      price: product?.price,
+      quantity: quantity,
+      subTotal: parseInt(product?.price * quantity),
+      countInStock: product?.countInStock,
+      productId: product?._id,
+      brand: product?.brand,
+      size: props?.item?.size?.length !== 0 ? selectedTabName : "",
+      ram: props?.item?.productRam?.length !== 0 ? selectedTabName : "",
+      weight: props?.item?.productWeight?.length !== 0 ? selectedTabName : "",
+      oldPrice: product?.oldPrice,
+      discount: product?.discount,
+    };
+
+    if (selectedTabName !== null) {
+      setIsLoading(true);
+      postData("/api/cart/add", productItem).then((res) => {
+        if (res?.error === false) {
+          context?.openAlertBox("success", res?.message);
+          context?.getCartItems();
+          setViewbutton(true);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 300);
+        } else {
+          context?.openAlertBox("error", res?.message);
+          setIsLoading(false);
+          if (res?.message === "Item already in cart") {
+            setViewbutton(true);
+          }
+        }
+      });
+    } else {
+      setTabError(true);
+    }
+  };
+
+  useEffect(() => {
+    if (context?.cartData && context?.cartData.length > 0 && props?.item?._id) {
+      const itemInCart = context.cartData.find(
+        (cartItem) => cartItem.productId === props?.item?._id,
+      );
+      if (itemInCart) {
+        setViewbutton(true);
+      } else {
+        setViewbutton(false);
+      }
+    }
+  }, [context?.cartData, props?.item?._id]);
 
   return (
     <>
@@ -59,8 +139,10 @@ const ProductDetailsComponent = (props) => {
             {props?.item?.productRam?.map((item, index) => {
               return (
                 <Button
-                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""}`}
-                  onClick={() => setProductActionIndex(index)}
+                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""} ${
+                    tabError === true && "error"
+                  }`}
+                  onClick={() => handleClickActiveTab(index, item)}
                 >
                   {item}
                 </Button>
@@ -77,8 +159,10 @@ const ProductDetailsComponent = (props) => {
             {props?.item?.size?.map((item, index) => {
               return (
                 <Button
-                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""}`}
-                  onClick={() => setProductActionIndex(index)}
+                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""} ${
+                    tabError === true && "error"
+                  }`}
+                  onClick={() => handleClickActiveTab(index, item)}
                 >
                   {item}
                 </Button>
@@ -95,8 +179,10 @@ const ProductDetailsComponent = (props) => {
             {props?.item?.productWeight?.map((item, index) => {
               return (
                 <Button
-                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""}`}
-                  onClick={() => setProductActionIndex(index)}
+                  className={`${productActionIndex === index ? "!bg-primary !text-white" : ""} ${
+                    tabError === true && "error"
+                  }`}
+                  onClick={() => handleClickActiveTab(index, item)}
                 >
                   {item}
                 </Button>
@@ -111,12 +197,33 @@ const ProductDetailsComponent = (props) => {
       </p>
       <div className="flex items-center gap-4 py-4">
         <div className="qtyBoxWrapper w-[70px]">
-          <QtyBox />
+          <QtyBox handleSelectQty={handleSelectQty} />
         </div>
 
-        <Button className="btn-org gap-2">
-          <GrCart className="text-[22px]" /> Add to cart
-        </Button>
+        {viewbutton === true ? (
+          <Button
+            className="btn primary flex gap-2 ml-4 !bg-green-500"
+            disabled
+          >
+            <TiTickOutline className="text-[22px]" />
+            Added
+          </Button>
+        ) : (
+          <Button
+            className="btn-org gap-2"
+            onClick={() =>
+              addToCart(props?.item, context?.userData?._id, quantity)
+            }
+          >
+            {isLoading === true ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              <>
+                <GrCart className="text-[22px]" /> Add to cart
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-4 mt-4">

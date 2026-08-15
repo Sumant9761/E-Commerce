@@ -20,6 +20,11 @@ import CartPanel from "../CartPanel";
 import { IoCloseSharp } from "react-icons/io5";
 import { MyContext } from "../../App";
 
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import ProductZoom from "../ProductZoom";
+import ProductDetailsComponent from "../ProductDetails";
+
 const Footer = () => {
   const context = useContext(MyContext);
 
@@ -267,9 +272,60 @@ const Footer = () => {
         {context?.cartData?.length !== 0 ? (
           <CartPanel data={context?.cartData} />
         ) : (
-          "Cart Empty"
+          <>
+            <div
+              className="flex items-center justify-center flex-col pt-[100px]"
+              gap-4
+            >
+              <img src="/empty-cart.png" className="w-[150px]" />
+              <h4>Your Cart is currently empty</h4>
+              <Link to="/">
+                <Button
+                  className="btn-org btn-sm"
+                  onClick={context?.toggleCartPanel(false)}
+                >
+                  Continue Shopping
+                </Button>
+              </Link>
+            </div>
+          </>
         )}
       </Drawer>
+
+      <Dialog
+        open={context?.openProductDetailsModel.open}
+        fullWidth={context?.fullWidth}
+        maxWidth={context?.maxWidth}
+        onClose={context?.handleCloseProductDetailsModel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        className="productDetailsModal"
+      >
+        <DialogContent>
+          <div className="flex items-center w-full productDetailsModalContainer relative">
+            <Button
+              className="!w-[40px] !h-[40px] !min-w-[40px] !rounded-full !text-[#000] !absolute top-[0px] 
+              right-[0px] !bg-[#f1f1f1]"
+              onClick={context?.handleCloseProductDetailsModel}
+            >
+              <IoCloseSharp className="text-[20px]" />
+            </Button>
+            {context?.openProductDetailsModel?.item?.length !== 0 && (
+              <>
+                <div className="col1 w-[40%] px-3 py-6">
+                  <ProductZoom images={context?.openProductDetailsModel?.item?.images} />
+                </div>
+
+                <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">
+                  <ProductDetailsComponent
+                    item={context?.openProductDetailsModel?.item}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

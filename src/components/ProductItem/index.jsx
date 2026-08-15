@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import { FaRegHeart, FaMinus, FaPlus } from "react-icons/fa";
 import { IoIosGitCompare } from "react-icons/io";
 import { MdZoomOutMap, MdOutlineShoppingCart } from "react-icons/md";
+import { IoMdClose } from "react-icons/io";
 import { MyContext } from "../../App";
 import { deleteData, editData } from "../../utils/api";
 
@@ -13,6 +14,7 @@ const ProductItem = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [cartItem, setCartItem] = useState([]);
+
   const [activeTab, setActiveTab] = useState(null);
   const [isShowActiveTab, setIsShowActiveTab] = useState(false);
   const [selectedTabName, setSelectedTabName] = useState(null);
@@ -22,23 +24,26 @@ const ProductItem = (props) => {
   const addToCart = (product, userId, quantity) => {
     const productItem = {
       _id: product?._id,
-      productTitle: product?.name,
+      name: product?.name,
       image: product?.images[0],
       rating: product?.rating,
       price: product?.price,
-      quantity,
+      quantity: quantity,
       subTotal: parseInt(product?.price * quantity),
       countInStock: product?.countInStock,
-     
       productId: product?._id,
       brand: product?.brand,
-      size: selectedTabName,
-      ram: selectedTabName,
-      weight: selectedTabName,
+      size: props?.item?.size?.length !== 0 ? selectedTabName : "",
+      ram: props?.item?.productRam?.length !== 0 ? selectedTabName : "",
+      weight: props?.item?.productWeight?.length !== 0 ? selectedTabName : "",
       oldPrice: product?.oldPrice,
       discount: product?.discount,
     };
-    if (props?.item?.size?.length !== 0) {
+    if (
+      props?.item?.size?.length !== 0 ||
+      props?.item?.productRam?.length !== 0 ||
+      props?.item?.productWeight?.length !== 0
+    ) {
       setIsShowActiveTab(true);
     } else {
       context?.addToCart(productItem, userId, quantity);
@@ -77,6 +82,8 @@ const ProductItem = (props) => {
       deleteData(`/api/cart/delete-cart-item/${cartItem[0]._id}`).then(
         (res) => {
           setIsAdded(false);
+          setIsShowActiveTab(false);
+          setActiveTab(null);
           context?.openAlertBox("success", res?.message);
           context?.getCartItems();
         },
@@ -112,6 +119,12 @@ const ProductItem = (props) => {
     setSelectedTabName(name);
   };
 
+  const handleCloseTab = () => {
+    setIsShowActiveTab(false);
+    setActiveTab(null);
+    setSelectedTabName(null);
+  };
+
   return (
     <div className="productItem shadow-lg rounded-md overflow-hidden border-1 border-[rgba(0,0,0,0.1)]">
       <div className="group imgWrapper w-[100%] h-[250px] rounded-md overflow-hidden relative">
@@ -131,6 +144,13 @@ const ProductItem = (props) => {
             className="flex items-center justify-center absolute top-0 left-0 w-full h-full
         bg-[rgba(0,0,0,0.7)] z-[60] p-3 gap-2"
           >
+            <Button
+              className="!min-w-8 !min-h-8 !w-8 !absolute top-2 right-2 !bg-white/70 !rounded-full 
+              hover:!bg-white transition-all p-0"
+              onClick={handleCloseTab}
+            >
+              <IoMdClose className="text-black text-lg" />
+            </Button>
             {props?.item?.size?.length !== 0 &&
               props?.item?.size?.map((size, index) => {
                 return (
@@ -142,6 +162,36 @@ const ProductItem = (props) => {
                     onClick={() => handleClickActiveTab(index, size)}
                   >
                     {size}
+                  </span>
+                );
+              })}
+
+            {props?.item?.productRam?.length !== 0 &&
+              props?.item?.productRam?.map((item, index) => {
+                return (
+                  <span
+                    key={index}
+                    className={`flex items-center justify-center p-1 px-2 bg-[rgba(255,255,255,0.8)] max-w-[45px]
+                  h-[25px] rounded-sm cursor-pointer hover:bg-white 
+                  ${activeTab === index && "!bg-primary text-white"}`}
+                    onClick={() => handleClickActiveTab(index, item)}
+                  >
+                    {item}
+                  </span>
+                );
+              })}
+
+            {props?.item?.productWeight?.length !== 0 &&
+              props?.item?.productWeight?.map((item, index) => {
+                return (
+                  <span
+                    key={index}
+                    className={`flex items-center justify-center p-1 px-2 bg-[rgba(255,255,255,0.8)] max-w-[35px]
+                  h-[25px] rounded-sm cursor-pointer hover:bg-white 
+                  ${activeTab === index && "!bg-primary text-white"}`}
+                    onClick={() => handleClickActiveTab(index, item)}
+                  >
+                    {item}
                   </span>
                 );
               })}

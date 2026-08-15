@@ -118,7 +118,9 @@ footer form input::placeholder{font-size: 14px;}
 .zoomProductSliderThumbs .swiper-button-next{bottom: 0px !important; right: inherit !important; top: inherit !important; width: 100% !important; height: 30px !important; border-radius: 0px !important;}
 .zoomProductSliderThumbs .swiper-button-prev{top: 0px !important; left: 0 !important; width: 100% !important; height: 30px !important; border-radius: 0px !important;}
 
-.productContent .actions button{min-width: 40px !important; height: 30px; border: 1px solid rgba(0,0,0,0.1) !important; color: rgba(0,0,0,0.7);}
+.productContent .actions button{min-width: 40px !important; height: 30px; border: 1px solid rgba(0,0,0,0.1) 
+    !important; color: rgba(0,0,0,0.7);}
+.productContent .actions button.error{border: 1px solid #ff5252 !important;}
 
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{
@@ -159,8 +161,11 @@ button .MuiCircularProgress-root{width: 30px !important; height: 30px !important
 
 header{box-shadow: 0px 1px 5px #0000001a;}
 
-/* .lazy-load-image-background img{transition: all 0.1s ease-in-out !important;}
+.lazy-load-image-background img{transition: all 0.1s ease-in-out !important;}
 
-.MuiFormControlLabel-label-root{margin-right: 0px !important;} */
+.MuiFormControlLabel-label-root{margin-right: 0px !important;}
 
 .MuiCircularProgress-root{@apply !text-primary}
+
+.MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.selected{@apply !text-primary}
+
