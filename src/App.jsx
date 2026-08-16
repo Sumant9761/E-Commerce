@@ -8,7 +8,6 @@ import Footer from "./components/Footer";
 import ProductDetails from "./Pages/ProductDetails";
 import { createContext, useEffect, useState } from "react";
 
-
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import CartPage from "./Pages/Cart";
@@ -30,15 +29,18 @@ function App() {
     open: false,
     item: {},
   });
- 
+
   const [isLogin, setIsLogin] = useState(false);
   const [userData, setUserData] = useState(null);
   const [catData, setCatData] = useState([]);
   const [address, setAddress] = useState([]);
   const [cartData, setCartData] = useState([]);
   const [myListData, setMyListData] = useState([]);
+  const [addressMode, setAddressMode] = useState("add");
+  const [addressId, setAddressId] = useState("");
 
   const [openCartPanel, setOpenCartPanel] = useState(false);
+  const [openAddressPanel, setOpenAddressPanel] = useState(false);
 
   const handleOpenProductDetailsModel = (status, item) => {
     setOpenProductDetailsModel({
@@ -58,29 +60,43 @@ function App() {
     setOpenCartPanel(newOpen);
   };
 
+  const toggleAddressPanel = (newOpen) => () => {
+    if(newOpen === false){
+      setAddressMode("add")
+    }
+    setOpenAddressPanel(newOpen);
+  };
+
+   const getUserDetails = () => {
+    fetchDataFromApi("/api/user/user-details").then((res) => {
+      setUserData(res.data);
+      if (res?.response?.data?.error === true) {
+        if (res?.response?.data?.message === "You have not login") {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          openAlertBox("error", "Your session is closed please login again");
+          window.location.href = "/login";
+          setIsLogin(false);
+        }
+      }
+    });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
     if (token !== undefined && token !== null && token !== "") {
       setIsLogin(true);
 
-      fetchDataFromApi("/api/user/user-details").then((res) => {
-        setUserData(res.data);
-        if (res?.response?.data?.error === true) {
-          if (res?.response?.data?.message === "You have not login") {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-            openAlertBox("error", "Your session is closed please login again");
-            window.location.href = "/login";
-            setIsLogin(false);
-          }
-        }
-      });
       getCartItems();
+      getMyListItems();
+      getUserDetails();
     } else {
       setIsLogin(false);
     }
   }, [isLogin]);
+
+ 
 
   useEffect(() => {
     fetchDataFromApi("/api/category").then((res) => {
@@ -140,6 +156,14 @@ function App() {
     });
   };
 
+  const getMyListItems = () => {
+    fetchDataFromApi(`/api/myList/`).then((res) => {
+      if (res?.error === false) {
+        setMyListData(res?.data);
+      }
+    });
+  };
+
   const values = {
     setOpenProductDetailsModel,
     openProductDetailsModel,
@@ -148,6 +172,9 @@ function App() {
     setOpenCartPanel,
     toggleCartPanel,
     openCartPanel,
+    setOpenAddressPanel,
+    toggleAddressPanel,
+    openAddressPanel,
     openAlertBox,
     isLogin,
     setIsLogin,
@@ -160,7 +187,15 @@ function App() {
     addToCart,
     cartData,
     getCartItems,
-    setCartData
+    setCartData,
+    myListData,
+    setMyListData,
+    getMyListItems,
+    getUserDetails,
+    setAddressMode,
+    addressMode,
+    setAddressId,
+    addressId
   };
 
   return (
@@ -186,8 +221,6 @@ function App() {
       </MyContext.Provider>
 
       <Toaster />
-
-      
     </>
   );
 }

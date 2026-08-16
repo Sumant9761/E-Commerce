@@ -45,6 +45,7 @@ const Header = () => {
         localStorage.removeItem("refreshToken");
         context?.setUserData(null);
         context?.setCartData([]);
+        context?.setMyListData([]);
         history("/");
       }
     });
@@ -219,11 +220,20 @@ const Header = () => {
 
               <li>
                 <Tooltip title="Wishlist">
-                  <IconButton aria-label="cart">
-                    <Badge badgeContent={8} color="primary">
-                      <FaRegHeart />
-                    </Badge>
-                  </IconButton>
+                  <Link to="/my-list">
+                    <IconButton aria-label="cart">
+                      <Badge
+                        badgeContent={
+                          context?.myListData?.length !== 0
+                            ? context?.myListData?.length
+                            : 0
+                        }
+                        color="primary"
+                      >
+                        <FaRegHeart />
+                      </Badge>
+                    </IconButton>
+                  </Link>
                 </Tooltip>
               </li>
 
@@ -234,7 +244,11 @@ const Header = () => {
                     onClick={() => context.setOpenCartPanel(true)}
                   >
                     <Badge
-                      badgeContent={context?.cartData?.length !== 0 ? context?.cartData?.length : 0}
+                      badgeContent={
+                        context?.cartData?.length !== 0
+                          ? context?.cartData?.length
+                          : 0
+                      }
                       color="primary"
                     >
                       <IoCart />

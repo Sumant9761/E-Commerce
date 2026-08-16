@@ -8,12 +8,14 @@ import { IoIosGitCompare } from "react-icons/io";
 import { MdZoomOutMap, MdOutlineShoppingCart } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { MyContext } from "../../App";
-import { deleteData, editData } from "../../utils/api";
+import { deleteData, editData, postData } from "../../utils/api";
+import { IoMdHeart } from "react-icons/io";
 
 const ProductItem = (props) => {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [cartItem, setCartItem] = useState([]);
+  const [isAddedInMyList, setIsAddedInMyList] = useState(false);
 
   const [activeTab, setActiveTab] = useState(null);
   const [isShowActiveTab, setIsShowActiveTab] = useState(false);
@@ -61,13 +63,22 @@ const ProductItem = (props) => {
     const item = context?.cartData?.filter((cartItem) =>
       cartItem.productId.includes(props?.item?._id),
     );
+    const myListItem = context?.myListData?.filter((item) =>
+      item.productId.includes(props?.item?._id),
+    );
 
-    if (item.length !== 0) {
+    if (item?.length !== 0) {
       setCartItem(item);
       setIsAdded(true);
       setQuantity(item[0]?.quantity);
     } else {
       setQuantity(1);
+    }
+
+    if (myListItem?.length !== 0) {
+      setIsAddedInMyList(true);
+    } else {
+      setIsAddedInMyList(false);
     }
   }, [context?.cartData]);
 
@@ -117,6 +128,36 @@ const ProductItem = (props) => {
   const handleClickActiveTab = (index, name) => {
     setActiveTab(index);
     setSelectedTabName(name);
+  };
+
+  const handleAddToMyList = (item) => {
+    if (!context?.userData) {
+      context?.openAlertBox("error", "You are not login so please login first");
+      return false;
+    } else {
+      const obj = {
+        productId: item?._id,
+        userId: context?.userData._id,
+        productTitle: item?.name,
+        image: item?.images[0],
+        rating: item?.rating,
+        price: item?.price,
+        oldPrice: item?.oldPrice,
+        brand: item?.brand,
+        discount: item?.discount,
+      };
+
+      postData("/api/myList/add", obj).then((res) => {
+        if (res?.error === false) {
+          context?.openAlertBox("success", res?.message);
+          setIsAddedInMyList(true);
+          context?.getMyListItems();
+        } else {
+          context?.openAlertBox("error", res?.message);
+        }
+      });
+      return true;
+    }
   };
 
   const handleCloseTab = () => {
@@ -227,10 +268,15 @@ const ProductItem = (props) => {
           </Button>
 
           <Button
-            className="!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary 
-          hover:text-white group"
+            className={`!w-[35px] !h-[35px] !min-w-[35px] !rounded-full !bg-white text-black hover:!bg-primary 
+          hover:text-white group`}
+            onClick={() => handleAddToMyList(props?.item)}
           >
-            <FaRegHeart className="text-[18px] !text-black group-hover:text-white" />
+            {isAddedInMyList === true ? (
+              <IoMdHeart className="text-[18px] !text-primary group-hover:text-white hover:!text-white" />
+            ) : (
+              <FaRegHeart className="text-[18px] !text-black group-hover:text-white hover:!text-white" />
+            )}
           </Button>
         </div>
       </div>

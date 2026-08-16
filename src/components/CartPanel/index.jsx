@@ -22,7 +22,10 @@ const CartPanel = (props) => {
           return (
             <div className="cartItem w-full flex items-center gap-4 border-b border-[rgba(0,0,0,0.1)] pb-4">
               <div className="img w-[25%] overflow-hidden h-[80px] rounded-md">
-                <Link to={`/product/${item?._id}`} className="block group">
+                <Link
+                  to={`/product/${item?.productId}`}
+                  className="block group"
+                >
                   <img
                     src={item?.image}
                     className="w-full group-hover:scale-105"
@@ -33,10 +36,10 @@ const CartPanel = (props) => {
               <div className="info w-[75%] pr-5 relative pt-3">
                 <h4 className="text-[14px] font-[500]">
                   <Link
-                    to={`/product/${item?._id}`}
+                    to={`/product/${item?.productId}`}
                     className="link transition-all"
                   >
-                    {item?.productTitle?.substr(0, 40) + "..."}
+                    {item?.productTitle?.substr(0, 30) + "..."}
                   </Link>
                 </h4>
 
@@ -44,8 +47,12 @@ const CartPanel = (props) => {
                   <span>
                     Qty : <span>{item?.quantity}</span>
                   </span>
-                  <span className="text-primary font-bold">
-                    Price : &#x20b9; {item?.price}
+                  <span className="text-primary font-[600]">
+                    Price :{" "}
+                    {(item?.quantity * item?.price).toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "INR",
+                    })}
                   </span>
                 </p>
 
@@ -102,10 +109,18 @@ const CartPanel = (props) => {
           <br />
 
           <div className="flex items-center justify-between w-full gap-5">
-            <Link to="/cart" className="w-[50%] d-block">
+            <Link
+              to="/cart"
+              className="w-[50%] d-block"
+              onClick={context?.toggleCartPanel(false)}
+            >
               <Button className="btn-org btn-lg w-full">View Cart</Button>
             </Link>
-            <Link to="/checkout" className="w-[50%] d-block">
+            <Link
+              to="/checkout"
+              className="w-[50%] d-block"
+              onClick={context?.toggleCartPanel(false)}
+            >
               <Button className="btn-org btn-border btn-lg w-full">
                 Checkout
               </Button>

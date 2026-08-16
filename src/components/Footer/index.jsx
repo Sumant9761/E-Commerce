@@ -24,6 +24,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import ProductZoom from "../ProductZoom";
 import ProductDetailsComponent from "../ProductDetails";
+import AddAddress from "../../Pages/MyAccount/addAddress";
 
 const Footer = () => {
   const context = useContext(MyContext);
@@ -292,6 +293,27 @@ const Footer = () => {
         )}
       </Drawer>
 
+      {/* Address Panel */}
+      <Drawer
+        open={context?.openAddressPanel}
+        onClose={context.toggleAddressPanel(false)}
+        anchor={"right"}
+        className="addressPanel"
+      >
+        <div className="flex items-center justify-between py-3 px-4 gap-3 border-b border-[rgba(0,0,0,0.1)] overflow-hidden">
+          <h4>
+            {context?.addressMode === "add" ? "Add" : "Edit"} Delivery
+            Address{" "}
+          </h4>
+          <IoCloseSharp
+            className="text-[20px] cursor-pointer"
+            onClick={context.toggleAddressPanel(false)}
+          />
+        </div>
+
+        <AddAddress />
+      </Drawer>
+
       <Dialog
         open={context?.openProductDetailsModel.open}
         fullWidth={context?.fullWidth}
@@ -313,7 +335,9 @@ const Footer = () => {
             {context?.openProductDetailsModel?.item?.length !== 0 && (
               <>
                 <div className="col1 w-[40%] px-3 py-6">
-                  <ProductZoom images={context?.openProductDetailsModel?.item?.images} />
+                  <ProductZoom
+                    images={context?.openProductDetailsModel?.item?.images}
+                  />
                 </div>
 
                 <div className="col2 w-[60%] py-8 px-8 pr-16 productContent">

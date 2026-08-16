@@ -40,7 +40,7 @@ font-weight: 500; font-size: 16px; padding: 7px 20px !important;}
 .btn-lg{font-size: 18px; padding: 10px 20px !important;}
 .btn-sm{font-size: 12px !important; padding: 5px 20px !important;}
 
-.link:hover{color: #ff5252;}
+.link:hover, .Mui-checked{color: #ff5252 !important;}
 
 .MuiBadge-badge{background-color: #ff5252 !important;}
 
@@ -133,6 +133,7 @@ input[type=number]::-webkit-outer-spin-button{
 .reviewScroll::-webkit-scrollbar-thumb{background: #ccc !important; }
 
 .cartPanel .MuiPaper-root{width: 400px; overflow: hidden;}
+.addressPanel .MuiPaper-root{width: 500px; overflow: hidden;}
 
 #size-menu .MuiButtonBase-root{font-size: 13px !important;}
 
