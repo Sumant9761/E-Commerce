@@ -56,42 +56,45 @@ const Sidebar = (props) => {
   };
 
   useEffect(() => {
-    const url = window.location.href;
     const queryParameters = new URLSearchParams(location.search);
 
-    if (url.includes("catId")) {
-      const categoryId = queryParameters.get("catId");
-      const catArr = [];
-      catArr.push(categoryId);
-      filters.catId = catArr;
-      filters.subCatId = [];
-      filters.thirdsubCatId = [];
-      filters.rating = [];
-    }
-    if (url.includes("subCatId")) {
-      const subcategoryId = queryParameters.get("subCatId");
-      const subcatArr = [];
-      subcatArr.push(subcategoryId);
-      filters.subCatId = subcatArr;
-      filters.catId = [];
-      filters.thirdsubCatId = [];
-      filters.rating = [];
-    }
-    if (url.includes("thirdsubCatId")) {
-      const thirdsubcategoryId = queryParameters.get("thirdsubCatId");
-      const thirdsubcatArr = [];
-      thirdsubcatArr.push(thirdsubcategoryId);
-      filters.thirdsubCatId = thirdsubcatArr;
-      filters.catId = [];
-      filters.subCatId = [];
-      filters.rating = [];
+    const categoryId = queryParameters.get("catId");
+    const subcategoryId = queryParameters.get("subCatId");
+    const thirdsubcategoryId = queryParameters.get("thirdsubCatId");
+    const searchVal = queryParameters.get("search") || queryParameters.get("q");
+
+    if (searchVal) {
+      props?.setIsLoading(true);
+      postData("/api/product/search", { query: searchVal }).then((res) => {
+        if (res?.error === false && res?.products) {
+          props?.setProductData(res);
+        } else {
+          props?.setProductData({ products: [] });
+        }
+        props?.setIsLoading(false);
+      });
+      return;
     }
 
-    filters.page = 1;
-    setTimeout(() => {
-      filtersData();
-    }, 200);
-  }, [location]);
+    const updatedFilters = {
+      catId: categoryId ? [categoryId] : [],
+      subCatId: subcategoryId ? [subcategoryId] : [],
+      thirdsubCatId: thirdsubcategoryId ? [thirdsubcategoryId] : [],
+      minPrice: "",
+      maxPrice: "",
+      rating: "",
+      page: 1,
+      limit: 25,
+    };
+
+    setFilters(updatedFilters);
+    props?.setIsLoading(true);
+
+    postData("/api/product/filters", updatedFilters).then((res) => {
+      props?.setProductData(res);
+      props?.setIsLoading(false);
+    });
+  }, [location.search]);
 
   const filtersData = () => {
     props?.setIsLoading(true);

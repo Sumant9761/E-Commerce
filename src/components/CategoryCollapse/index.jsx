@@ -35,18 +35,26 @@ const CategoryCollapse = (props) => {
                   className="list-none flex items-center realtive flex-col"
                   key={index}
                 >
-                  <Link to="/" className="w-full">
+                  <Link to={`/productListing?catId=${cat?._id}`} className="w-full">
                     <Button className="w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]">
                       {cat?.name}
                       {submenuIndex === index ? (
                         <FiMinusSquare
                           className="absolute top-[10px] right-[15px] cursor-pointer"
-                          onClick={() => openSubmenu(index)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openSubmenu(index);
+                          }}
                         />
                       ) : (
                         <FaRegPlusSquare
                           className="absolute top-[10px] right-[15px] cursor-pointer"
-                          onClick={() => openSubmenu(index)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            openSubmenu(index);
+                          }}
                         />
                       )}
                     </Button>
@@ -58,18 +66,26 @@ const CategoryCollapse = (props) => {
                         cat?.children?.map((subCat, index_) => {
                           return (
                             <li className="list-none relative" key={index_}>
-                              <Link to="/" className="w-full">
+                              <Link to={`/productListing?subCatId=${subCat?._id}`} className="w-full">
                                 <Button className="w-full !text-left !justify-start !px-3 !text-[rgba(0,0,0,0.8)]">
                                   {subCat?.name}
                                   {innerSubmenuIndex === index_ ? (
                                     <FiMinusSquare
                                       className="absolute top-[10px] right-[15px] cursor-pointer"
-                                      onClick={() => openInnerSubmenu(index_)}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openInnerSubmenu(index_);
+                                      }}
                                     />
                                   ) : (
                                     <FaRegPlusSquare
                                       className="absolute top-[10px] right-[15px] cursor-pointer"
-                                      onClick={() => openInnerSubmenu(index_)}
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openInnerSubmenu(index_);
+                                      }}
                                     />
                                   )}
                                 </Button>
@@ -86,14 +102,13 @@ const CategoryCollapse = (props) => {
                                             key={index__}
                                           >
                                             <Link
-                                              to="/"
+                                              to={`/productListing?thirdsubCatId=${thirdLevelCat?._id}`}
                                               className="link w-full !text-left !justify-start !px-6 transition text-[14px]"
                                             >
                                               {thirdLevelCat?.name}
                                             </Link>
                                           </li>
                                         );
-                                        F;
                                       },
                                     )}
                                 </ul>

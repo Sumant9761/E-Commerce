@@ -52,7 +52,7 @@ const Navigation = () => {
                   return (
                     <li className="list-one relative" key={index}>
                       <Link
-                        to="/productListing"
+                        to={`/productListing?catId=${cat?._id}`}
                         className="link transition text-[14px] font-[500]"
                       >
                         <Button className="link transition !font-[500] !text-[rgba(0,0,0,0.8)] hover:!text-[#ff5252] !py-4">
@@ -71,43 +71,43 @@ const Navigation = () => {
                                   className="list-none w-full relative"
                                   key={index_}
                                 >
-                                  <Link to="/" className="w-full">
+                                  <Link to={`/productListing?subCatId=${subCat?._id}`} className="w-full">
                                     <Button className="!text-[rgba(0,0,0,0.8)] w-full !text-left !justify-start !rounded-none">
                                       {subCat?.name}
                                     </Button>
-
-                                    {subCat?.children?.length !== 0 && (
-                                      <div
-                                        className="submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white 
-                                shadow-md opacity-0 transition-all"
-                                      >
-                                        <ul>
-                                          {subCat?.children?.map(
-                                            (thirdLevelCat, index__) => {
-                                              return (
-                                                <li
-                                                  className="list-none w-full"
-                                                  key={index__}
-                                                >
-                                                  <Link
-                                                    to="/"
-                                                    className="w-full"
-                                                  >
-                                                    <Button
-                                                      className="!text-[rgba(0,0,0,0.8)] w-full !text-left 
-                                                      !justify-start !rounded-none"
-                                                    >
-                                                      {thirdLevelCat?.name}
-                                                    </Button>
-                                                  </Link>
-                                                </li>
-                                              );
-                                            },
-                                          )}
-                                        </ul>
-                                      </div>
-                                    )}
                                   </Link>
+
+                                  {subCat?.children?.length !== 0 && (
+                                    <div
+                                      className="submenu absolute top-[0%] left-[100%] min-w-[150px] bg-white 
+                              shadow-md opacity-0 transition-all"
+                                    >
+                                      <ul>
+                                        {subCat?.children?.map(
+                                          (thirdLevelCat, index__) => {
+                                            return (
+                                              <li
+                                                className="list-none w-full"
+                                                key={index__}
+                                              >
+                                                <Link
+                                                  to={`/productListing?thirdsubCatId=${thirdLevelCat?._id}`}
+                                                  className="w-full"
+                                                >
+                                                  <Button
+                                                    className="!text-[rgba(0,0,0,0.8)] w-full !text-left 
+                                                    !justify-start !rounded-none"
+                                                  >
+                                                    {thirdLevelCat?.name}
+                                                  </Button>
+                                                </Link>
+                                              </li>
+                                            );
+                                          },
+                                        )}
+                                      </ul>
+                                    </div>
+                                  )}
                                 </li>
                               );
                             })}
