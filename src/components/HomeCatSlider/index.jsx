@@ -14,6 +14,13 @@ const HomeCatSlider = (props) => {
           spaceBetween={10}
           navigation={true}
           modules={[Navigation]}
+          breakpoints={{
+            320: { slidesPerView: 3, spaceBetween: 8 },
+            480: { slidesPerView: 4, spaceBetween: 10 },
+            640: { slidesPerView: 5, spaceBetween: 10 },
+            768: { slidesPerView: 6, spaceBetween: 10 },
+            1024: { slidesPerView: 8, spaceBetween: 10 }
+          }}
           className="mySwiper"
         >
           {props?.data?.map((cat, index) => {

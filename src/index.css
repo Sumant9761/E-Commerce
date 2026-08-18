@@ -249,3 +249,182 @@ header{box-shadow: 0px 1px 5px #0000001a;}
 
 .MuiButtonBase-root.MuiMenuItem-root.MuiMenuItem-gutters.selected{@apply !text-primary}
 
+/* ==========================================================================
+   Comprehensive Responsive Layout System (Mobile, Tablet, Laptop)
+   ========================================================================== */
+
+.container {
+  width: 95% !important;
+  max-width: 1400px !important;
+  margin: 0 auto !important;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Tablet & Intermediate Screens (max-width: 1024px) */
+@media (max-width: 1024px) {
+  .header .container {
+    flex-wrap: wrap !important;
+    gap: 15px !important;
+  }
+  
+  .header .col1 {
+    width: auto !important;
+  }
+
+  .header .col2 {
+    width: 60% !important;
+  }
+
+  .header .col3 {
+    width: auto !important;
+    padding-left: 0 !important;
+  }
+
+  nav .container {
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+  }
+
+  nav .col_1 {
+    width: 45% !important;
+  }
+
+  nav .col_2 {
+    width: 100% !important;
+    order: 3;
+    overflow-x: auto;
+  }
+
+  nav .col_3 {
+    width: 45% !important;
+  }
+
+  .productListingPage {
+    flex-direction: column !important;
+  }
+
+  .productListingPage .sidebarWrapper {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+
+  .productListingPage .contentRight {
+    width: 100% !important;
+  }
+
+  .productDetailsModal .MuiDialog-paper,
+  .MuiDialog-paper {
+    width: 92vw !important;
+    max-width: 92vw !important;
+    margin: 10px !important;
+  }
+
+  .productContent {
+    flex-direction: column !important;
+  }
+
+  .productContent .productZoom {
+    width: 100% !important;
+  }
+
+  .productContent .productInfo {
+    width: 100% !important;
+    margin-top: 20px;
+  }
+}
+
+/* Mobile & Small Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .top-strip {
+    display: none !important;
+  }
+
+  .header .container {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .header .col1,
+  .header .col2,
+  .header .col3 {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .header .col3 ul {
+    justify-content: center !important;
+  }
+
+  nav .col_1,
+  nav .col_3 {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
+
+  nav .col_3 p {
+    justify-content: center !important;
+  }
+
+  .cartPage {
+    flex-direction: column !important;
+  }
+
+  .cartPage .cartTable {
+    width: 100% !important;
+    overflow-x: auto !important;
+  }
+
+  .cartPage .cartSummary {
+    width: 100% !important;
+    margin-top: 20px !important;
+  }
+
+  .myAccountPage {
+    flex-direction: column !important;
+  }
+
+  .myAccountPage .accountSidebar {
+    width: 100% !important;
+    margin-bottom: 20px;
+  }
+
+  .myAccountPage .accountContent {
+    width: 100% !important;
+  }
+
+  .cartPanel .MuiPaper-root,
+  .addressPanel .MuiPaper-root {
+    width: 100% !important;
+    max-width: 360px !important;
+  }
+}
+
+/* Small Mobile Screens (max-width: 480px) */
+@media (max-width: 480px) {
+  .container {
+    width: 98% !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+
+  .productItem {
+    padding: 10px !important;
+  }
+
+  .productItem h3 {
+    font-size: 13px !important;
+  }
+
+  .btn-org {
+    padding: 6px 12px !important;
+    font-size: 14px !important;
+  }
+}
+
